@@ -1,0 +1,27 @@
+{
+  "name": "wetube",
+  "version": "1.0.0",
+  "description": "The best way to watch movie.",
+  "scripts": {
+    "win": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Forging-Man/-Nomad-wetube.git"
+  },
+  "keywords": [
+    "NodeJS",
+    "Mongo",
+    "EXPRESS",
+    "ES6"
+  ],
+  "author": "SEO",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Forging-Man/-Nomad-wetube/issues"
+  },
+  "homepage": "https://github.com/Forging-Man/-Nomad-wetube#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
