@@ -43,4 +43,77 @@
 
 ## #2.4 The Tower of Babel
 
-<span style="color:#FF7F50">[Node-JS]</span> </br>
+<span style="color:#FF7F50">[Node-JS]</span> devdependencies 란? </br>
+
+- "개발자"들을 위한 의존성 패키지
+- "유저" 입장에서는 필요없는 것
+- 단순히 "누구를 위한 의존성인가"를 명시하기 위해 구분할 뿐, 큰 의미는 없다.
+- 어차피 설치할때는 알아서 전부 다 설치된다.
+
+```js
+> npm install --save-dev package_name // --save-dev가 추가됨
+```
+
+<span style="color:#FF7F50">[Node-JS]</span> Bable 이란? </br>
+
+- Node는 최신 js문법까지 적용할 수 있는 건 아니다.
+- Bable은 최신 js문법을 자동으로 Node에 알맞게 바꿔주는 패키지
+
+```js
+// 설치 방법
+> npm install --save-dev @bable/core
+> npm install @babel/preset-env --save-dev // preset 설치
+```
+
+</br>
+
+---
+
+## #2.5 Nodemon
+
+<span style="color:#FF7F50">[Node-JS]</span> Nodemon 이란? </br>
+
+> NODE 서버를 이용하면서 코드를 변경하게 될 경우, 변경한 코드를 웹 상에서 확인하려면 서버를 껐다가 다시 켜야 변화를 감지할 수 있다. NODEMON은 서버를 내리고 올리지 않아도 소스를 변경할 때 바로 감지해서 자동으로 서버를 재시작 해주는 TOOL이다.
+
+```js
+// 설치 방법
+> npm install @babel/core @babel/node --save-dev
+```
+
+```js
+// package.json 에서 사용방법
+  "scripts": {
+    "dev": "nodemon --exec babel-node index.js"
+  },
+
+// 터미널 사용법
+> npm run dev // nodemon이 켜져있으므로 js파일이 변경될때마다 자동 재실행 (서버용)
+```
+
+</br>
+
+---
+
+# #3 Introduction to Express
+
+## #3.0 Your First Server
+
+<span style="color:#00FFFF">[EXPRESS]</span> express란?</br>
+
+> express란 NodeJS를 사용하여 쉽게 서버를 구성할 수 있게 만든 클래스와 라이브러리의 집합체
+
+```js
+// express application 만드는법
+// 여기서 말하는 application : express 메소드를 쓰기 위해 정의시켜두는 app 변수
+import express from "express";
+
+const app = express();
+```
+
+```js
+// 서버를 만들고 포트 4000을 listening하는 법
+app.listen(4000, handleListening); // 후반, 콜백함수
+```
+
+- 서버 상황을 보고 싶다면, 웹 주소에 localhost:4000 입력
+- 서버가 아예 열리지 않았다면, 페이지 자체가 안열릴거임.
