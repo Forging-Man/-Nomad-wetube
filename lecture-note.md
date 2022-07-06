@@ -112,8 +112,70 @@ const app = express();
 
 ```js
 // 서버를 만들고 포트 4000을 listening하는 법
-app.listen(4000, handleListening); // 후반, 콜백함수
+app.listen(4000, callback_func); // 포트번호, 콜백함수
 ```
 
 - 서버 상황을 보고 싶다면, 웹 주소에 localhost:4000 입력
 - 서버가 아예 열리지 않았다면, 페이지 자체가 안열릴거임.
+
+</br>
+
+---
+
+## #3.1 GET Request P1
+
+<span style="color:#00FFFF">[EXPRESS]</span> HTTP GET method 의미</br>
+
+```js
+// 서버에 처음 접속하면 아래와 같은 에러메세지가 뜬다. 그 의미를 생각해보자
+cannot GET /
+// GET : HTTP method로 뒤의 주소를 서버로부터 가져와서 표시해준다.
+// /... : GET의 대상물에 해당하는 주소.
+
+/*
+해당 에러메세지는 "/의 주소를 가져올 수가 없다"라는 뜻이다.
+서버를 처음 접속하면 자동으로 HTTP에서 GET method를 실행한다.
+따라서 서버측에서는 해당 GET method에 맞는 무언가를 준비해둬야 한다.
+*/
+```
+
+</br>
+
+---
+
+## #3.2 GET Request P2
+
+<span style="color:#00FFFF">[EXPRESS]</span> GET을 처리하는 방법</br>
+
+```js
+app.get("처리할 대상물", callback_func); // app.get("/", handleHome); 수업 중 코드
+```
+
+</br>
+
+---
+
+## #3.3 Responses
+
+<span style="color:#00FFFF">[EXPRESS]</span> response에는 항상 req, res 두 개체가 생성된다. </br>
+
+- addEventListner의 callback함수의 event 객체처럼, </br>
+  express의 각종 callback함수는 requese, response의 두 객체를 생성한다.
+
+```js
+const handleHome = (req, res) => console.log(req); // or res
+app.get("/", handleHome); // 서버 로딩 시 req 객체 확인
+```
+
+```js
+const handleHome = (req, res) => {
+  return res.end(); // res의 end()함수 이용
+};
+app.get("/", handleHome); // 서버 로딩 시 res가 end()를 작동시켜 request를 끝내버림
+```
+
+```js
+// res 함수들
+res.end() : request를 바로 종료
+res.send("메세지") : 화면에 띄울 메세지를 입력
+```
