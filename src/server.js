@@ -3,16 +3,18 @@ import express from "express";
 const app = express();
 const PORT = 4000;
 
-const handleHome = (req, res) => {
-  return res.send("Hello!");
+const logger = (req, res, next) => {
+  console.log(`Someone is going to: ${req.method} ${req.url}`);
+  next();
 };
 
-function handleLogin(req, res) {
-  return res.send("This is Login Screen!");
-}
+const handleHome = (req, res) => {
+  return res.send("This is handleHome!");
+};
 
-app.get("/", handleHome);
-app.get("/login", handleLogin);
+// app 호출 구간
+
+app.get("/", logger, handleHome);
 
 const handleListening = () =>
   console.log(`Server listening on port http://localhost:${PORT}`);

@@ -178,4 +178,59 @@ app.get("/", handleHome); // 서버 로딩 시 res가 end()를 작동시켜 requ
 // res 함수들
 res.end() : request를 바로 종료
 res.send("메세지") : 화면에 띄울 메세지를 입력
+// 메세지 이외에도 JSON 등을 기입할 수도 있음
 ```
+
+</br>
+
+---
+
+## #3.5 Middlewares P1
+
+<span style="color:#00FFFF">[EXPRESS]</span> Middleware란? </br>
+
+- request를 처리해서 response하기 위해 중간에서 일하는 함수들
+- 여태까지 handle..라고 썼던 함수들이 모두 Middleware에 속한다. </br>
+  (handle.. 을 이제부터 controller라고 총칭한다.)
+- next객체와 next함수를 이용해서 다음 미들웨어(함수)를 호출할 수 있다.
+
+```js
+// next 객체를 포함한 middleware
+const gossipMiddleware = (req, res, next) => {
+  console.log("this is middle");
+  // return res.send("End Line!");
+  // ↑ return을 포함하므로, 여기서 함수 실행을 종료시킴. next()안 할거임
+  next();
+};
+
+// 또 다른 moddleware지만, 더 이상 next가 없음
+const handleHome = (req, res) => {
+  return res.send("Hello!");
+};
+
+// gossipMiddleware 실행 후, next를 만나면 handleHome 실행
+app.get("/", gossipMiddleware, handleHome);
+```
+
+- 유명한 미들웨어들은 이미 만들어져 있으므로, 불러와서 실행도 가능하다. </br>
+  실습에서 해 볼 예정
+
+</br>
+
+---
+
+## #3.6 Middlewares P2
+
+<span style="color:#00FFFF">[EXPRESS]</span> app.use( ) 사용법 </br>
+
+- app.use(callback_func) 은 global middleware라고 생각하면 된다.
+- next( ) 등에 따른 순서가 매우 중요하므로, 필요한 app 호출 구간 위에 위치시키자
+- app.use( )를 여러개 불러올 수도 있다.
+
+```js
+// gossipMiddleware을 먼저 실행 후, get 조건에 일치하면 handleHome 실행
+app.use(gossipMiddleware);
+app.get("/", handleHome);
+```
+
+<span style="color:#00FFFF">[EXPRESS]</span> request </br>
