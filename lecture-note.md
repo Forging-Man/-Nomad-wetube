@@ -234,3 +234,38 @@ app.get("/", handleHome);
 ```
 
 <span style="color:#00FFFF">[EXPRESS]</span> request </br>
+
+</br>
+
+---
+
+## #3.11 External Middlewares
+
+<span style="color:#00FFFF">[EXPRESS]</span> Morgan </br>
+
+- logging에 도움을 주는 외부 middleware
+- tiny, combine, dev 등의 옵션으로 현재 HTTP가 어떤 명령을 실행했는지 보여준다.
+
+```js
+> npm i morgan // morgan 설치
+
+import morgan from "morgan" // 임포트 후
+app.use(morgan("dev")); // dev 형식 로깅 사용 (색깔 표시되서 보기좋음)
+```
+
+</br>
+
+---
+
+# #4 ROUTERS
+
+## #4.0 What are Routers?
+
+<span style="color:#00FFFF">[EXPRESS]</span> router란? </br>
+
+- Express에서 router란, middleware와 같이 독립된 "미니-어플리케이션"이다.
+- 즉, middleware처럼 app.use( )에서도 사용 가능하다.
+
+> router의 본래 의미는 각 url들이 쉽게 구분될 수 있도록 분배하는 역할이다. </br>
+> user/join, user/delete 처럼 user 를 각각의 페이지(역할)에 따라 구분 짓는다. </br>
+> 이 과정을 router라고 한다. -니콜라스-

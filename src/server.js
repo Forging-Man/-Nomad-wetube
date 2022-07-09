@@ -1,20 +1,17 @@
 import express from "express";
+import morgan from "morgan";
 
 const app = express();
-const PORT = 4000;
-
-const logger = (req, res, next) => {
-  console.log(`Someone is going to: ${req.method} ${req.url}`);
-  next();
-};
+const PORT = 4000; // 백엔드 관습 포트 4000
 
 const handleHome = (req, res) => {
+  // 사실 arrow func는 return을 내장하고있음
   return res.send("This is handleHome!");
 };
 
 // app 호출 구간
-
-app.get("/", logger, handleHome);
+app.use(morgan("dev")); // 로깅을 리턴해주는 morgan 호출
+app.get("/", handleHome);
 
 const handleListening = () =>
   console.log(`Server listening on port http://localhost:${PORT}`);
