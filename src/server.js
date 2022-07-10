@@ -1,17 +1,16 @@
 import express from "express";
 import morgan from "morgan";
+import globalRouter from "./routers/globalRouter";
+import userRouter from "./routers/userRouter";
+import videoRouter from "./routers/videoRouter";
 
 const app = express();
 const PORT = 4000; // 백엔드 관습 포트 4000
-
-const handleHome = (req, res) => {
-  // 사실 arrow func는 return을 내장하고있음
-  return res.send("This is handleHome!");
-};
-
-// app 호출 구간
 app.use(morgan("dev")); // 로깅을 리턴해주는 morgan 호출
-app.get("/", handleHome);
+
+app.use("/", globalRouter);
+app.use("/users", userRouter);
+app.use("/videos", videoRouter);
 
 const handleListening = () =>
   console.log(`Server listening on port http://localhost:${PORT}`);

@@ -269,3 +269,79 @@ app.use(morgan("dev")); // dev 형식 로깅 사용 (색깔 표시되서 보기�
 > router의 본래 의미는 각 url들이 쉽게 구분될 수 있도록 분배하는 역할이다. </br>
 > user/join, user/delete 처럼 user 를 각각의 페이지(역할)에 따라 구분 짓는다. </br>
 > 이 과정을 router라고 한다. -니콜라스-
+
+</br>
+
+---
+
+## #4.1 Making our Routers
+
+<span style="color:#00FFFF">[EXPRESS]</span> router 만들기 </br>
+
+- 라우터 선언을 통해, 각각의 주소들을 어떻게 반응시킬지 관리한다.
+
+```js
+// 라우터 선언
+const globalRouter = express.Router();
+const userRouter = express.Router();
+const videoRouter = express.Router();
+
+// 라우터 별 함수 선언
+const handleHome = (req, res) => res.send("Home");
+// 해당 라우터로 접근 시, 함수 실행
+globalRouter.get("/", handleHome);
+```
+
+</br>
+
+---
+
+## #4.2 Cleaning the Code
+
+<span style="color:#00FFFF">[EXPRESS]</span> 라우터들은 각각 모듈화 시켜라 </br>
+
+```js
+> globalRouter.js 안에..
+
+const globalRouter = express.Router();
+const handleHome = (req, res) => res.send("Home");
+globalRouter.get("/", handleHome);
+globalRouter.get("/join", handleHome); // 여러 주소 추가 가능
+
+// server.js에서 import하기 위해, 반드시 export해준다.
+export default globalRouter;
+```
+
+```js
+// export default 된 변수를 다른 JS파일에서 import 하는 법
+import globalRouter from "./routers/globalRouter";
+
+// 이 때, globalRouter는 이름변경 가능 (default 라서 변경해도 인식)
+```
+
+</br>
+
+---
+
+## #4.3 Exports
+
+<span style="color:#00FFFF">[EXPRESS]</span> Controller들은 별도 폴더에 </br>
+
+- 라우터랑 컨트롤러 코드를 한 js 파일에 넣는 건은 사실 이론상으론 병맛이다.
+- 따라서 컨트롤러는 따로 모아서 만드는게 좋다.
+- 문제는 이렇게 만든 수 많은 컨트롤러들을 어떻게 export하고 가져올 것인가? </br>
+  (export default는 오직 하나의 변수만 export가능)
+
+  ```js
+  // 모든 함수를 export 해야하니까 default가 아닌 각각에 export
+  export const trending = (req, res) => res.send("Home Page Videos");
+  export const watch = (req, res) => res.send("Watch");
+  export const edit = (req, res) => res.send("Edit");export const
+  ```
+
+  ```js
+  // 각각의 export된 변수를 불러올때는 { object } 식으로 불러옴
+  // default때와 달리, 변수 이름은 변경 불가능
+  import { join } from "../controllers/userController";
+  import { trending } from "../controllers/videoController";
+  ```
