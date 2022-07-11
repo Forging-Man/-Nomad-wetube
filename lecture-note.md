@@ -279,6 +279,8 @@ app.use(morgan("dev")); // dev 형식 로깅 사용 (색깔 표시되서 보기�
 <span style="color:#00FFFF">[EXPRESS]</span> router 만들기 </br>
 
 - 라우터 선언을 통해, 각각의 주소들을 어떻게 반응시킬지 관리한다.
+- 라우터를 통해 url들을 보다 독립적으로 관리할 수 있게 된다. </br>
+  (라우터가 없다면 코드가 복잡해지거나 꼬일거다.)
 
 ```js
 // 라우터 선언
@@ -333,7 +335,7 @@ import globalRouter from "./routers/globalRouter";
   (export default는 오직 하나의 변수만 export가능)
 
   ```js
-  // 모든 함수를 export 해야하니까 default가 아닌 각각에 export
+  // 모든 함수(변수)를 export 해야하니까 default가 아닌 각각에 export
   export const trending = (req, res) => res.send("Home Page Videos");
   export const watch = (req, res) => res.send("Watch");
   export const edit = (req, res) => res.send("Edit");export const
@@ -342,6 +344,15 @@ import globalRouter from "./routers/globalRouter";
   ```js
   // 각각의 export된 변수를 불러올때는 { object } 식으로 불러옴
   // default때와 달리, 변수 이름은 변경 불가능
+  // 경로 보충 설명 : .(현재폴더) ..(상위폴더)
   import { join } from "../controllers/userController";
   import { trending } from "../controllers/videoController";
   ```
+
+</br>
+
+---
+
+## #4.7 URL Parameters P1
+
+<span style="color:#00FFFF">[EXPRESS]</span> </br>
