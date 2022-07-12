@@ -355,4 +355,136 @@ import globalRouter from "./routers/globalRouter";
 
 ## #4.7 URL Parameters P1
 
-<span style="color:#00FFFF">[EXPRESS]</span> </br>
+<span style="color:#00FFFF">[EXPRESS]</span> /:id 의미</br>
+
+- :(콜론) 뒤에 있는 것을 변수로 취급한다는 뜻
+- 수 많은 비디오들을 일일히 라우터 지정할 수가 없으니, 그것들을 변수로 지정해 넣어준단 뜻이다.
+
+```js
+// :id가 불가능 하다면.. id별로 라우터를 지정
+app.use("/1", userRouter);
+app.use("/2", userRouter);
+app.use("/3", userRouter);
+
+// :id가 가능하다면..한줄로 변수화
+app.use("/:id", userRouter);
+```
+
+<span style="color:#00FFFF">[EXPRESS]</span> req.params, req.query 차이</br>
+
+- params : 파라미터 값을 리턴
+- query : 질문에 대한 답 값을 리턴
+
+```js
+// 입력주소 : https://www.test.com/여기가파람스위치?쿼리위치1=1&쿼리위치2=2
+
+app.get("/:id", (req, res) => {
+  console.log("req.params : ", req.params);
+  /* output ==>> req.params : { id : '여기가파람스위치'}*/
+
+  console.log("req.query : ", req.query);
+  /* output ==>> req.query : { 쿼리위치1: '1', 쿼리위치2: '2'}*/
+});
+```
+
+<span style="color:#00FFFF">[EXPRESS]</span> /:id 배치 순서는 중요 </br>
+
+```js
+// :id 배치는 /upload 밑으로 와야 upload페이지가 제대로 읽힌다.
+videoRouter.get("/upload", upload); // upload는 id로 착각당하지 않기 위해 맨 위로 와야함
+videoRouter.get("/:id", see);
+videoRouter.get("/:id/edit", edit);
+videoRouter.get("/:id/remove", deleteVideo);
+```
+
+</br>
+
+---
+
+## #4.8 URL Parameters P2
+
+<span style="color:#00FFFF">[EXPRESS]</span> express url path 방식 </br>
+
+```js
+// b가 선택사항
+app.get('/ab?cd', (req, res) => res.send('ab?cd'); // acd, abcd
+
+// b의 숫자가 선택사항
+app.get('/ab+cd', (req, res) => res.send('ab+cd'); // abcd, abbcd, abbbcd..
+
+// b와 c 사이의 문자열이 선택사항
+app.get('/ab*cd', (req, res) => res.send('ab*cd'); // abRANDOMcd, abseoHEAcd..
+
+// 괄호안이 선택사항
+app.get('/ab(cd)?e', (req, res) => res.send('ab(cd)?e'); // abe, abcde
+
+// 정규표현식 (아래 따로 후술)
+app.get(/.*fly$/, (req, res) => res.send('/.*fly$/'); // butterfly, dragonfly..
+```
+
+<span style="color:#00FFFF">[EXPRESS]</span> 정규표현식 예제 </br>
+
+|    표현식    | 의미                                                                                                        |
+| :----------: | :---------------------------------------------------------------------------------------------------------- |
+|      ^x      | 문자열의 시작을 표현하며 x 문자로 시작됨을 의미한다.                                                        |
+|      x$      | 문자열의 종료를 표현하며 x 문자로 종료됨을 의미한다.                                                        |
+|      .x      | 임의의 한 문자의 자리수를 표현하며 문자열이 x 로 끝난다는 것을 의미한다.                                    |
+|      x+      | 반복을 표현하며 x 문자가 한번 이상 반복됨을 의미한다.                                                       |
+|      x?      | 존재여부를 표현하며 x 문자가 존재할 수도, 존재하지 않을 수도 있음을 의미한다.                               |
+|     x\*      | 반복여부를 표현하며 x 문자가 0번 또는 그 이상 반복됨을 의미한다.                                            |
+| x{y (or기호) | or 를 표현하며 x 또는 y 문자가 존재함을 의미한다.                                                           |
+|     (x)      | 그룹을 표현하며 x 를 그룹으로 처리함을 의미한다.                                                            |
+|    (x)(y)    | 그룹들의 집합을 표현하며 앞에서 부터 순서대로 번호를 부여하여 관리하고 x, y 는 각 그룹의 데이터로 관리된다. |
+|   (x)(?:y)   | 그룹들의 집합에 대한 예외를 표현하며 그룹 집합으로 관리되지 않음을 의미한다.                                |
+|     x{n}     | 반복을 표현하며 x 문자가 n번 반복됨을 의미한다.                                                             |
+|    x{n,}     | 반복을 표현하며 x 문자가 n번 이상 반복됨을 의미한다.                                                        |
+|    x{n,m}    | 반복을 표현하며 x 문자가 최소 n번 이상 최대 m 번 이하로 반복됨을 의미한다.                                  |
+|     [xy]     | 문자 선택을 표현하며 x 와 y 중에 하나를 의미한다.                                                           |
+|    [^xy]     | not 을 표현하며  x 및 y 를 제외한 문자를 의미한다.                                                          |
+|    [x-z]     | range를 표현하며 x ~ z 사이의 문자를 의미한다.                                                              |
+|      \^      | escape 를 표현하며 ^ 를 문자로 사용함을 의미한다.                                                           |
+|      \b      | word boundary를 표현하며 문자와 공백사이의 문자를 의미한다.                                                 |
+|      \B      | non word boundary를 표현하며 문자와 공백사이가 아닌 문자를 의미한다.                                        |
+|      \d      | digit 를 표현하며 숫자를 의미한다.                                                                          |
+|      \D      | non digit 를 표현하며 숫자가 아닌 것을 의미한다.                                                            |
+|      \s      | space 를 표현하며 공백 문자를 의미한다.                                                                     |
+|      \S      | non space를 표현하며 공백 문자가 아닌 것을 의미한다.                                                        |
+|      \t      | tab 을 표현하며 탭 문자를 의미한다.                                                                         |
+|      \v      | vertical tab을 표현하며 수직 탭(?) 문자를 의미한다.                                                         |
+|      \w      | word 를 표현하며 알파벳 + 숫자 + \_ 중의 한 문자임을 의미한다.                                              |
+|      \W      | non word를 표현하며 알파벳 + 숫자 + \_ 가 아닌 문자를 의미한다.                                             |
+
+> 예제 </br>
+
+1. 전화번호 - /^\d{3}-\d{3,4}-\d{4}$/ </br>
+   시작을 숫자 3개로하며 /   중간에 하이픈 -  하나 존재 /  숫자가 3~4개 존재하며 /  하이픈 하나 존재 /  숫자 4개로 끝남
+
+2. 핸드폰 번호 - /^01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})$/ </br>
+   시작을 숫자 01로 시작하며 그 후에 0,1,6,7,8,9 중에 하나가 나올수도 있으며 /  하이픈 - 하나 존재할수도 있으며 /  숫자 3~4개 이어지고 / 또 하이픈 - 하나 존재할수도 있으며 / 숫자 4개가 이어짐
+
+3. nico를 포함한 모든 문자열 선택 - (nico\w+)
+
+4. 숫자만 선택 - \d+
+
+```js
+// JS에서는 괄호를 덮고 \를 두번 쳐야 한다. (url에 regex를 넘기기위한 규칙)
+videoRouter.get("/:id(\\d+)", see); // 이걸로 id는 숫자만 인식한다.
+
+// 이 경우, 어차피 id는 숫자만 인식하므로 /upload를 밑으로 보내도 작동한다.
+videoRouter.get("/:id(\\d+)", see);
+videoRouter.get("/:id(\\d+)/edit", edit);
+videoRouter.get("/:id(\\d+)/remove", deleteVideo);
+videoRouter.get("/upload", upload); // id는 숫자만 인식하므로 upload는 밑으로와도 무방
+```
+
+</br>
+
+---
+
+# #5 TEMPLATES
+
+## #5.1 Configuring Pug
+
+<span style="color:#00FFFF">[EXPRESS]</span> PUG란? </br>
+
+- html view template engine으로, 주로 Node.js에서 res.send 대신 html을 표시하기 위해 사용된다.
