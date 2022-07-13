@@ -6,8 +6,10 @@ import videoRouter from "./routers/videoRouter";
 
 const app = express();
 const PORT = 4000; // 백엔드 관습 포트 4000
-app.use(morgan("dev")); // 로깅을 리턴해주는 morgan 호출
 
+app.set("view engine", "pug"); // express초기 값으로 views폴더의 pug파일을 바라볼 것
+app.set("views", process.cwd() + "/src/views");
+app.use(morgan("dev")); // 로깅을 리턴해주는 morgan 호출
 app.use("/", globalRouter);
 app.use("/users", userRouter);
 app.use("/videos", videoRouter);

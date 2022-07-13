@@ -4,7 +4,8 @@
 <span style="color:yellow">[JS]</span>
 <span style="color:#FF7F50">[Node-JS]</span>
 <span style="color:#00FFFF">[EXPRESS]</span>
-<span style="color:#7FFF00">[MONGO-DB]</span>
+<span style="color:#7FFF00">[PUG]</span>
+<span style="color:#D9F8C4">[MONGO-DB]</span>
 
 # #2 Set Up
 
@@ -485,6 +486,109 @@ videoRouter.get("/upload", upload); // id는 숫자만 인식하므로 upload는
 
 ## #5.1 Configuring Pug
 
-<span style="color:#00FFFF">[EXPRESS]</span> PUG란? </br>
+<span style="color:#7FFF00">[PUG]</span> PUG란? </br>
 
-- html view template engine으로, 주로 Node.js에서 res.send 대신 html을 표시하기 위해 사용된다.
+- html view template engine으로, 주로 express에서 res.send 대신 html을 표시하기 위해 사용된다.
+- html을 직접 쓰는 것 보다 코드가 깔끔하다는 장점이있다.
+- cocoatalk처럼 미리 만들어둔 HTML 파일을 연동시킬 수도 있지만, 정적인 페이지만 보낼 수 있다.
+- req의 요청에 따른 서로 다른 대응을 위해서는 pug등의 템플릿 엔진이 필요하다.
+- <BUT!! react같은 프레임워크를 이용하면 사실 템플릿 엔진 조차도 필요없어지긴 한다.>
+
+```js
+// pug 사용법
+// 1. pug 인스톨
+> npm i pug
+
+// 2. server.js에 app.set으로 view engine설정
+app.set("view engine", "pug");
+
+// 3. 프로젝트에 src/views 폴더 만들고 그 안에 *.pug파일 생성
+> .views/home.pug
+
+// 4. 라우터(컨트롤러) 함수에 res.render("pug_fime_name") 입력
+export const trending = (req, res) => res.render("home");
+
+// 5. pug 실행 위치를 현재 디렉토리가 아니라 src/views로 변경 (server.js에서)
+app.set("views", process.cwd() + "/src/views");
+// **현재 node.js가 실행되는 경로를 알아보는 함수**
+console.log(process.cwd());
+```
+
+</br>
+
+---
+
+## #5.2 Partials
+
+<span style="color:#7FFF00">[PUG]</span> PUG 기본 사용법 </br>
+
+- 기본적으로 파이썬과 같이 들여쓰기로 각 태그 범위를 판단한다.
+- 내부에 JS문법을 쓸 경우 #{ JS_CODE }를 사용한다. </br>
+  (유저측 입장에선 JS코드가 자동으로 html으로 컴파일 되기때문에 알 수 없다.)
+
+```js
+doctype html
+html(lang="kr")
+    head
+        title Wetube
+    body
+        h1 Watch Video!!
+        footer &copy; #{new Date().getFullYear()} Wetube
+```
+
+<span style="color:#7FFF00">[PUG]</span> PUG의 Partial 기능 </br>
+
+- 부분 상속의 개념
+- 다른 pug파일을 include함으로써, 그 안의 html코드를 가져올 수 있다.
+- 해당 html코드를 변경시킬때는 include한 파일 내부만 변경시키면 된다.
+
+```js
+// .partials/footer.pug 내용물
+footer &copy; #{new Date().getFullYear()} Wetube
+
+// home.pug 안에 추가시킬 코드
+...
+include partials/footer.pug
+```
+
+</br>
+
+---
+
+## #5.3 Extending Templates
+
+<span style="color:#7FFF00">[PUG]</span> inheritance (파일)상속 </br>
+
+- 특정 pug(주로 베이스파일)파일을 가져와, 특정 부분만 수정하는 방법
+- include와의 차이점 : include 수정이고 뭐고 그냥 그대로 가져와서 붙여넣음
+
+```js
+// base.pug
+doctype html
+html(lang="kr")
+    head
+        block head // 바꾸고 싶은 부분을 block 변수명 지정
+    body
+        block content // 바꾸고 싶은 부분을 block 변수명 지정
+    include partials/footer.pug
+```
+
+```js
+// home.pug
+// base.pug를 상속해서 h1 부분만 수정하기
+extends base.pug
+
+block head
+    title Home | Wetube // base.pug의 block head가 title Home | Wetube로 교체되어 home.pug에 들어옴
+
+block content
+    h1 Home! // base.pug의 block content가 h1 Hello!로 교체되어 home.pug에 들어옴
+```
+
+</br>
+
+---
+
+## #5.4 Variables to Templates
+
+<span style="color:#7FFF00">[PUG]</span> </br>
