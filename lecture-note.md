@@ -591,4 +591,24 @@ block content
 
 ## #5.4 Variables to Templates
 
-<span style="color:#7FFF00">[PUG]</span> </br>
+<span style="color:#7FFF00">[PUG]</span> PUG에서 JS variable을 쓰는 법</br>
+
+- 각 pug파일을 호출하는 controller에 들어간다.
+- res.render("pug_file_name", { variable_name: "내용물"} ); 을 작성한다.
+- res.render(view [, locals] [, callback]) 순서임을 참고하자. (express 공식문서)
+
+```js
+// base.pug
+doctype html
+html(lang="kr")
+    head
+        title #{pageTitle} | WeTube // pageTitle이라는 JS변수를 전해줘야한다.
+```
+
+```js
+// base.pug 는 videoController에서 호출하고 있으므로
+// videoController.js
+
+export const trending = (req, res) => res.render("home", { pageTitle: "Home" });
+// pageTitle에 대한 변수를 정의해서 base.pug에 건네준다.
+```
