@@ -612,3 +612,110 @@ html(lang="kr")
 export const trending = (req, res) => res.render("home", { pageTitle: "Home" });
 // pageTitle에 대한 변수를 정의해서 base.pug에 건네준다.
 ```
+
+</br>
+
+---
+
+## #5.6 MVP Stlyes
+
+<span style="color:skyblue">[CSS]</span> MVP style이란
+
+- 밋밋한 HTML에 기본적인 style을 적용시키는 기본 템플릿
+- HTML에 link코드만 추가하면 된다.
+- 홈피 : https://andybrewer.github.io/mvp/
+
+```html
+<!-- HTML -->
+<link rel="stylesheet" href="https://unpkg.com/mvp.css" />
+```
+
+```js
+// PUG
+link(rel="stylesheet" href="https://unpkg.com/mvp.css")
+```
+
+</br>
+
+---
+
+## #5.7 Conditionals
+
+<span style="color:#7FFF00">[PUG]</span> variable을 쓰는 다른 방법</br>
+
+- variable만 단독으로 쓸 경우, 태그명=variable을 사용한다.
+- 다른 텍스트, 혹은 여러 variable과 혼용할 경우 #{variable}을 쓴다.
+
+```js
+// PUG에서 사용시
+head
+  title #{pageTitle} | WeTube // variable 혼용 사용
+header
+  h1=pageTitle // variable 단독 사용
+```
+
+<span style="color:#7FFF00">[PUG]</span> PUG내에서 if/else 쓰는 법</br>
+
+- JS의 구조보다 더욱 간결하면서도 비슷하게 사용가능하다.
+
+```js
+// videoController
+export const trending = (req, res) =>
+  res.render("home", { pageTitle: "Home", fakeUser: fakeUser });
+//fakeUser가 추가된 상태
+```
+
+```js
+// PUG
+ ul
+    if fakeUser.loggedIn
+    // fakeUser.loggedIn을 감별 (이때, HTML이 아닌 JS구문이라 #{}, = 등이 필요없다.)
+        li
+            a(href="/logout") Log out
+    else
+        li
+            a(href="/login") Login
+```
+
+</br>
+
+---
+
+## #5.8 Iteration
+
+<span style="color:#7FFF00">[PUG]</span> pug에서 반복(iteration)하기</br>
+
+- array 또는 object가 지정되어 있어야 함
+- array(obj)가 없을 때를 대비한 문법도 존재
+
+```js
+// videoController
+export const trending = (req, res) => {
+  const videos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; // array 존재
+  return res.render("home", { pageTitle: "Home", videos });
+};
+```
+
+```js
+// pug : array
+ul
+  each video in videos // videos라는 array를 참조해서 item 리턴
+      li=video // item 수 만큼 li 작성
+  else // pug만의 문법으로, array가 존재하지 않을 때 작동
+      li Nothing found.
+```
+
+```js
+// pug : obj
+ul
+  each val, key in {1: 'one', 2: 'two', 3: 'three'} // obj로 삽입
+    li= key + ': ' + val
+```
+
+</br>
+
+---
+
+## #5.9 Mixins
+
+<span style="color:#7FFF00">[PUG]</span> </br>
