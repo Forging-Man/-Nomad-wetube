@@ -718,4 +718,59 @@ ul
 
 ## #5.9 Mixins
 
+<span style="color:#7FFF00">[PUG]</span> mixin 이란?</br>
+
+- partial처럼 HTML을 반복해서 사용할 수 있는 일종의 함수 (=재사용가능한 component)
+- partial과의 차이점은 JS함수마냥 다른 데이터를 불러와서 처리할 수 있다는거다. </br>
+  (partial은 그냥 그대로 HTML을 불러오는거밖에 못함)
+- PUG에서 mixin이란 선언문을 지원하고, 이를 통해 사용가능
+- partial처럼 include를 통해 mixin파일을 불러온 후, 해당 파일의 내부 함수명을 통해 사용가능
+
+```js
+// mixin이 선언된 pug파일
+mixin video(info)
+    div
+        h4=info.title
+        ul
+            li #{info.rating}/5.
+            li #{info.comments} comments.
+            li Posted #{info.createdAt}
+            li #{info.views} views.
+```
+
+```js
+// 다른 pug파일에서 mixin파일을 불러온 후 사용 방법
+include mixins/video
+
+block content
+        each potato in videos
+            +video(potato) //+를 통해 함수명을 호출한다.
+```
+
+</br>
+
+---
+
+# #6 MONGODB AND MONGOOSE
+
+## #6.0 Array Datebase P1
+
+<span style="color:#7FFF00">[PUG]</span> PUG attribute에 string + JS variable 같이쓰기</br>
+
+- PUG 각 태그에는 여턔까지 그냥 string #{JS var} 로 함께 쓸 수 있었다.
+- 근데 h1(id=..), a(href=..) 등의 attribute에는 안먹힌다.
+- PUG의 attribute에는 JS string 규칙을 적용시킨다. (``(백틱)괄호로 덮는거)
+
+```js
+// pug
+  h4
+      a(href=`/videos/${video.id}`)=video.title // 백틱``기호 사용
+```
+
+</br>
+
+---
+
+## #6.0 Array Datebase P1
+
 <span style="color:#7FFF00">[PUG]</span> </br>
