@@ -771,6 +771,113 @@ block content
 
 ---
 
-## #6.0 Array Datebase P1
+## #6.1 Array Datebase P1
 
-<span style="color:#7FFF00">[PUG]</span> </br>
+<span style="color:#7FFF00">[PUG]</span> ternary operator 삼항연산자</br>
+
+- 단어가 어렵게 들리지만, 결국 한 문장으로 이루어진 if문
+- 조건문에쓰는 a, true일때 반환할 b, false일때 반환할 c를 합쳐서 삼항이다.
+
+```js
+/// pug
+block content
+    h1 #{video.views} #{video.views === 1 ? "view" : "views"}
+    // 1이면 view반환, 아니면 views반환
+```
+
+<span style="color:#7FFF00">[PUG]</span> href의 절대주소, 상대주소</br>
+
+- href="add" : 상대주소 (현 주소 마지막을 add로 교체)
+- href="/add" : 절대주소 (루트 바로 뒤를 add로 교체)
+
+```js
+// pug
+> localhost:4000/profile/edit-profile/seo 가 있다고 가정
+
+a(href="potato") // 상대주소
+=> localhost:4000/profile/edit-profile/potato
+
+a(href="/potato") // 절대주소
+=> localhost:4000/potato
+```
+
+</br>
+
+---
+
+## #6.2 Eidt Video P2
+
+<span style="color:#00FFFF">[EXPRESS]</span> POST 하는 법 </br>
+
+- GET / POST 차이 </br>
+  GET : back-end의 데이터를 받기만 한다 </br>
+  POST : back-end의 데이터를 수정하거나 업뎃, 삭제한다.
+- Router에 app.post를 따로 작성해야 HTML의 post를 인식한다.
+- get과 post를 동시에 처리하는 함수로 route가 있다.
+
+```js
+// pug
+form((method = "get")); // 초기값
+form((method = "post")); // 서버에 post 요청
+```
+
+```js
+// router.js
+videoRouter.get("/:id(\\d+)/edit", getEdit); // get감지
+videoRouter.post("/:id(\\d+)/edit", postEdit); // post감지
+
+// get, post를 한줄로
+videoRouter.route("/:id(\\d+)/edit").get(getEdit).post(postEdit);
+```
+
+<span style="color:#00FFFF">[EXPRESS]</span> res.redirec("add") </br>
+
+- 다른 주소로 이동시키는 메소드
+
+```js
+// router.js 에서
+export const postEdit = (req, res) => {
+  const id = req.params.id;
+  return res.redirect(`/videos/${id}`);
+};
+```
+
+</br>
+
+---
+
+## #6.2 Eidt Video P3
+
+<span style="color:#00FFFF">[EXPRESS]</span> express에서 form 제출 인식하는 법 </br>
+
+- server.js 에 middleware로 아래 코드가 필요 </br>
+  app.use(express.urlencoded({ extended: true }));
+
+```js
+// server.js 에서
+app.use(express.urlencoded({ extended: true })); // express에서 html from 제출 인식
+```
+
+<span style="color:#00FFFF">[EXPRESS]</span> 변수 범위 알기 </br>
+
+- 외부에서 정의된 obj 배열내부 값을 바꾸려면, obj 배열에 직접 접근해서 바꿔야한다.
+
+```js
+// videoController
+let videos[{obj...}] // 외부에 videos obj가 있는 상태
+
+export const postEdit = (req, res) => {
+  const id = req.params.id;
+  const title = req.body.title;
+  videos[id - 1].title = title; // videos 배열 객체에 직접 접근해서 값을 바꾼다.
+```
+
+```js
+// 잘못된 예
+export const postEdit = (req, res) => {
+  const id = req.params.id;
+  const title = req.body.title;
+  // 이 경우, 이 함수 내부에서만 video객체가 있는 상태이므로 원래의(밖의) videos의 객체 title은 바뀌지 않는다.
+  const video = videos[id -1];
+  video.title = title; // 결국 title은 바뀌지않음
+```
