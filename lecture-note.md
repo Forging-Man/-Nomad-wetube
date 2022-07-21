@@ -818,7 +818,7 @@ a(href="/potato") // 절대주소
 ```js
 // pug
 form((method = "get")); // 초기값
-form((method = "post")); // 서버에 post 요청
+form((method = "post"), (action = "/videos/url")); // post를 action주소에 보내고 라우터의 post 액션 실행
 ```
 
 ```js
@@ -850,12 +850,22 @@ export const postEdit = (req, res) => {
 
 <span style="color:#00FFFF">[EXPRESS]</span> express에서 form 제출 인식하는 법 </br>
 
+- form 형식은 req.body를 통해 key-value 값을 가져온다. </br>
+  (이 때, input을 썼다면 input에 name attribute가 있어야 인식한다.)
 - server.js 에 middleware로 아래 코드가 필요 </br>
   app.use(express.urlencoded({ extended: true }));
 
 ```js
 // server.js 에서
-app.use(express.urlencoded({ extended: true })); // express에서 html from 제출 인식
+// express에서 html from 제출 인식하는 middleware
+app.use(express.urlencoded({ extended: true }));
+```
+
+```js
+// videoController 에서
+export const postEdit = (req, res) => {
+  const title = req.body.title; // req.body 사용가능
+};
 ```
 
 <span style="color:#00FFFF">[EXPRESS]</span> 변수 범위 알기 </br>
@@ -881,3 +891,11 @@ export const postEdit = (req, res) => {
   const video = videos[id -1];
   video.title = title; // 결국 title은 바뀌지않음
 ```
+
+</br>
+
+---
+
+## #6.7
+
+<span style="color:#00FFFF">[EXPRESS]</span> </br>

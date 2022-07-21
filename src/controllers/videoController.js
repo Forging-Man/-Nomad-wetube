@@ -47,3 +47,23 @@ export const postEdit = (req, res) => {
   // video.title = title; // 이 경우, 이 함수 내부에서만 video객체가 있는 상태이므로 원래의(밖의) videos의 객체 title은 바뀌지 않는다.
   return res.redirect(`/videos/${id}`);
 };
+
+// 추가 연습 get, post
+export const getUpload = (req, res) => {
+  return res.render("upload", { pageTitle: "Upload Video" });
+};
+
+export const postUpload = (req, res) => {
+  // 추가로 올라갈 비디오 obj가 여기 서술됨
+  const { title } = req.body;
+  const newVideo = {
+    title,
+    rating: 0,
+    comments: 0,
+    createdAt: "just now",
+    views: 0,
+    id: videos.length + 1,
+  };
+  videos.push(newVideo);
+  return res.redirect("/");
+};
