@@ -896,6 +896,46 @@ export const postEdit = (req, res) => {
 
 ---
 
-## #6.7
+## #6.8 Connecting to Mongo
 
-<span style="color:#00FFFF">[EXPRESS]</span> </br>
+<span style="color:#D9F8C4">[MONGO-DB]</span> mongodb 윈도우 설치 주의사항 </br>
+
+- 최신버전은 제대로 안먹히는 의혹이 있다. 그 전 버전을 설치하자.
+- 만약 경로를 틀려서 삭제했다면, 반드시 재부팅해줄 것
+- compass는 어차피 사용하지 않는다. 설치안해도 무방
+
+<span style="color:#D9F8C4">[Mongoose]</span> Node랑 MongoDB 연결하는 법 </br>
+
+- Mongoose는 Node에서 MongoDB를 실행할 수 있도록 하는 연결고리다.
+
+```js
+> npm i mongoose // 몽구스 설치
+```
+
+```js
+// db.js 만들고 아래 템플릿 입력
+import mongoose from "mongoose"; // 몽구스 임포트
+
+mongoose.connect("mongodb://127.0.0.1:27017/wetube", {
+  // cmd mongo 실행시 연결된 shell에 표기된 ip주소 + 내가 원하는 db사이트 주소
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  // server측에서 추가로 인식할 obj들
+});
+
+const db = mongoose.connection;
+
+const handleOpen = () => console.log("👍 Connected to DB");
+const handleError = (error) => console.log("DB Error", error);
+
+db.on("error", handleError); // on : addEvent처럼, error가 발생할 때 마다 항상 실행
+db.once("open", handleOpen); // once : 단 한번만 실행
+```
+
+```js
+// server.js 에서..
+import "./db"; // db.js파일을 직접 명시해서 임포트
+
+// db 임포트를 맨 윗줄에써도, 맨 마지막에 (서버가 다 실행되고 나서) 실행된다.
+// 이는 db가 더 느리기때문
+```
