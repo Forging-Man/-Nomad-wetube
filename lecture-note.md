@@ -939,3 +939,103 @@ import "./db"; // db.js파일을 직접 명시해서 임포트
 // db 임포트를 맨 윗줄에써도, 맨 마지막에 (서버가 다 실행되고 나서) 실행된다.
 // 이는 db가 더 느리기때문
 ```
+
+</br>
+
+---
+
+## #6.9 CRUD Introduction
+
+<span style="color:#D9F8C4">[MONGO-DB]</span> CRUD 의미 </br>
+
+- C : Create
+- R : Remove
+- U : Update
+- D : Delete
+- DB의 기본 원칙들
+
+<span style="color:#D9F8C4">[MONGO-DB]</span> DB 데이터를 저장하는 몽구스 관습 </br>
+
+- models 폴더안 Video.js처럼 대문자시작 파일안에 DB정의
+
+</br>
+
+---
+
+## #6.10 Video Model
+
+<span style="color:#D9F8C4">[MONGO-DB]</span> 몽구스 schema란 ? </br>
+
+- DB 모델의 생김새를 정의
+- mongoose.Schema({안에 각 항목의 타입만을 정의})
+- 이 후 mongoose.model("모델이름," 스키마함수명) 로 모델 정의
+- 이 후 해당 모델변수를 default export
+
+```js
+// .models/Video.js 에서..
+
+import mongoose from "mongoose";
+
+const videoSchema = new mongoose.Schema({
+  // 각 항목의 타입만을 정의 (디테일을 적는게 아니라)
+  title: String,
+  descriptione: String,
+  CreatedAt: Date,
+  hashtags: [{ type: String }],
+  meta: {
+    views: Number,
+    rating: Number,
+  },
+});
+
+// 모델 작성 후 익스포트
+const Video = mongoose.model("Video", videoSchema);
+export default Video;
+```
+
+</br>
+
+---
+
+## #6.11 Our First Query
+
+<span style="color:#D9F8C4">[MONGO-DB]</span> server와 init 분리 </br>
+
+- server는 serve역할에만 충실하도록 초기화단계(DB포함)는 init으로 분리 </br>
+  (분리항목은 코드 참조)
+- 이 때, init.js를 인식할 수 있도록 package.json 의 실행파일을 init.js로 변경
+
+```js
+// init.JS에 적을(server.js에서 가져올) 항목들..
+
+import "./db";
+import "./models/Video";
+// 추후 추가될 DB들도 여기 작성
+import app from "./server";
+
+const PORT = 4000; // 백엔드 관습 포트 4000
+
+const handleListening = () =>
+  console.log(`Server listening on port http://localhost:${PORT}`);
+
+// 서버가 만들어지고, 포트 4000을 listen하고 있음
+// 서버 맨 마지막에 들어가야하는 코드 (GET등을 미리 정의한 후에..)
+app.listen(PORT, handleListening);
+```
+
+</br>
+
+---
+
+## #6.12 Our First Query P2
+
+<span style="color:#D9F8C4">[MONGO-DB]</span> DB 쿼리에 접근하는 방법 </br>
+
+- callback 방법과 promise 방법, 두 가지가 있다.
+- 둘 다 DB로부터 반응이 오기까지 기다릴 수 있다는 특징이 있다.
+
+1. callback 방법
+
+```js
+// videoController.js 에서..
+```
