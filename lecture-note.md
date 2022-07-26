@@ -904,7 +904,7 @@ export const postEdit = (req, res) => {
 - 만약 경로를 틀려서 삭제했다면, 반드시 재부팅해줄 것
 - compass는 어차피 사용하지 않는다. 설치안해도 무방
 
-<span style="color:#D9F8C4">[Mongoose]</span> Node랑 MongoDB 연결하는 법 </br>
+<span style="color:#D9F8C4">[MONGOOSE]</span> Node랑 MongoDB 연결하는 법 </br>
 
 - Mongoose는 Node에서 MongoDB를 실행할 수 있도록 하는 연결고리다.
 
@@ -954,7 +954,7 @@ import "./db"; // db.js파일을 직접 명시해서 임포트
 - D : Delete
 - DB의 기본 원칙들
 
-<span style="color:#D9F8C4">[MONGO-DB]</span> DB 데이터를 저장하는 몽구스 관습 </br>
+<span style="color:#D9F8C4">[MONGOOSE]</span> DB 데이터를 저장하는 몽구스 관습 </br>
 
 - models 폴더안 Video.js처럼 대문자시작 파일안에 DB정의
 
@@ -964,7 +964,7 @@ import "./db"; // db.js파일을 직접 명시해서 임포트
 
 ## #6.10 Video Model
 
-<span style="color:#D9F8C4">[MONGO-DB]</span> 몽구스 schema란 ? </br>
+<span style="color:#D9F8C4">[MONGOOSE]</span> 몽구스 schema란 ? </br>
 
 - DB 모델의 생김새를 정의
 - mongoose.Schema({안에 각 항목의 타입만을 정의})
@@ -999,7 +999,7 @@ export default Video;
 
 ## #6.11 Our First Query
 
-<span style="color:#D9F8C4">[MONGO-DB]</span> server와 init 분리 </br>
+<span style="color:#D9F8C4">[MONGOOSE]</span> server와 init 분리 </br>
 
 - server는 serve역할에만 충실하도록 초기화단계(DB포함)는 init으로 분리 </br>
   (분리항목은 코드 참조)
@@ -1027,15 +1027,101 @@ app.listen(PORT, handleListening);
 
 ---
 
-## #6.12 Our First Query P2
+## #6.12-13 Our First Query P2 / Async Await
 
-<span style="color:#D9F8C4">[MONGO-DB]</span> DB 쿼리에 접근하는 방법 </br>
+<span style="color:#D9F8C4">[MONGOOSE]</span> DB 쿼리에 접근하는 방법 </br>
 
 - callback 방법과 promise 방법, 두 가지가 있다.
 - 둘 다 DB로부터 반응이 오기까지 기다릴 수 있다는 특징이 있다.
 
-1. callback 방법
+1. callback 방법 (비추)
+
+- addEventListner 처럼 callback 함수를 호출한다.
+- 단, 실행순서를 고려해서 함수안에 함수안에 함수..같은 식으로 코드가 복잡해진다.
 
 ```js
 // videoController.js 에서..
+
+import Video from "../models/Video";
+
+export const home = (req, res) => {
+  // Video.js의 DB에 접근, {}을 기준(빈칸이니까 모든 것을 검색)으로 검색 시작
+  // DB의 callback통신이라 제일 느리게 실행될 것
+  Video.find({}, (error, videos) => {
+    return res.render("home", { pageTitle: "Home", videos: [] }); // DB를 가져온 후 render하기 위해 DB callback 안으로 해당 코드 이동
+    console.log("This is final"); // 코드상 맨 윗줄이지만, DB callback을 거치므로 맨 마지막에 실행
+  });
+  console.log("This is first"); // 오히려 이게 맨 처음 실행
+};
+```
+
+2. promise 방법 (추천)
+
+- callback의 최신버전이라고 보면 된다.
+- DB 통신을 기다려주기(async, await)때문에, 코드 순서대로 실행되고 가독성도 좋다.
+- 단, error를 잡기위해선 try, catch 구문을 써야한다.
+
+```js
+// videoController.js 에서..
+
+import Video from "../models/Video";
+
+export const home = async (req, res) => {
+  // async : 비동기 (async function)
+  // await는 async 함수 안에서만 실행가능하다.
+  // Video.js의 DB에 접근, {}을 기준(빈칸이니까 모든 것을 검색)으로 검색 시작
+  // DB의 promise 통신이라 순서대로 실행될 것
+  try {
+    // error를 잡기위해 따로 추가한 try, catch 구문
+    // await중 잡히는 모든 error를 검출한다.
+    // error발생시, await 아래에있는 코드는 실행되지 않는다.
+    console.log("First");
+    const videos = await Video.find({}); // await를 보고 자동으로 DB에서 video를 할당
+    console.log("Final");
+    return res.render("home", { pageTitle: "Home", videos: [] });
+  } catch {
+    return res.render("server-error");
+  }
+};
+```
+
+</br>
+
+---
+
+## #6.14 Returns and Renders
+
+<span style="color:#00FFFF">[EXPRESS]</span> render시, return 있고 없고의 차이 </br>
+
+- return은 해당 범위의 함수를 확실히 종료시키기 위해 사용된다.
+- render만으로도 페이지 표시하는데에는 문제가 없다. </br>
+  그러나, render이후에 또 다시 render나 sentstatus 등의 함수를 쓸 경우 에러가 발생한다.
+- 이러한 경우를 방지하고자 return을 쓰는 거다.
+- 그러니 render 두번 금지 같은 각 메소드의 쓰임새를 잘 이해하고 있는 편이 더 중요하다.
+
+```js
+// error의 예
+Video.find({}, (error, videos) => {
+  res.render("home", { pageTitle: "Home", videos: [] });
+  res.render("home", { pageTitle: "Home", videos: [] }); // render는 연속해서 불가능
+});
+
+// 아래와 같은 error 발생
+> ERROR [ERR_HTTP_HEADER_SENT]: Cannot set headers after they are sent to the client
+```
+
+</br>
+
+---
+
+## #6.15 Creating a Video P1 (6:55 이어서)
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> hashtags 같은 "," 가 들어있는 string을 배열화 하는 법 </br>
+
+- JS 고유의 split("구분자")를 사용
+
+```js
+"hello,food,today".split(","); // 구분자 (,) comma
+
+// [0:hello, 1:food, 2:today] obj 변환
 ```

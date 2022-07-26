@@ -1,9 +1,14 @@
 import Video from "../models/Video";
 
-// 모든 함수를 export 해야하니까 default가 아닌 각각에 export
-export const home = (req, res) => {
-  Video.find({});
-  return res.render("home", { pageTitle: "Home" });
+export const home = async (req, res) => {
+  // Video.js의 DB에 접근, {}을 기준(빈칸이니까 모든 것을 검색)으로 검색 시작
+  // DB의 promise 통신이라 순서대로 실행될 것
+  try {
+    const videos = await Video.find({});
+    return res.render("home", { pageTitle: "Home", videos: [] });
+  } catch {
+    return res.render("server-error");
+  }
 };
 
 export const watch = (req, res) => {
@@ -28,6 +33,15 @@ export const getUpload = (req, res) => {
 
 export const postUpload = (req, res) => {
   // 추가로 올라갈 비디오 obj가 여기 서술됨
-  const { title } = req.body;
+  const { title, description, hashtags } = req.body;
+  const video = new Video({
+    title,
+    description,
+    createdAt: Date.now(),
+    meta: {
+      views: 0,
+      rating: 0,
+    },
+  });
   return res.redirect("/");
 };
