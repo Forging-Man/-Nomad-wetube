@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const videoSchema = new mongoose.Schema({
   // 각 항목의 타입만을 정의 (디테일을 적는게 아니라)
   title: String,
-  descriptione: String,
-  CreatedAt: Date,
+  description: String,
+  createdAt: Date,
   hashtags: [{ type: String }],
   meta: {
     views: Number,

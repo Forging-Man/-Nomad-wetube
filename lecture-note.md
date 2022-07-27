@@ -978,6 +978,7 @@ import mongoose from "mongoose";
 
 const videoSchema = new mongoose.Schema({
   // 각 항목의 타입만을 정의 (디테일을 적는게 아니라)
+  // 여기서 미리 지정된 타입만 입력 가능하다. (벗어날 경우 DB저장 자체가 안됨)
   title: String,
   descriptione: String,
   CreatedAt: Date,
@@ -1114,14 +1115,91 @@ Video.find({}, (error, videos) => {
 
 ---
 
-## #6.15 Creating a Video P1 (6:55 이어서)
+## #6.15 Creating a Video P1
 
 <span style="color:#D9F8C4">[MONGOOSE]</span> hashtags 같은 "," 가 들어있는 string을 배열화 하는 법 </br>
 
 - JS 고유의 split("구분자")를 사용
+- 분리된 단어에 무언가를 추가하고자 할 경우 map(function) 사용
 
 ```js
 "hello,food,today".split(","); // 구분자 (,) comma
-
 // [0:hello, 1:food, 2:today] obj 변환
+
+"hello,food,today".split(",").map((word) => `#${word}`); // 앞글자에 # 추가
+// [0:#hello, 1:#food, 2:#today] obj 변환
 ```
+
+</br>
+
+---
+
+## #6.16 Creating a Video P2
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> DB를 실제로 저장하는 법 </br>
+
+- 두 가지 방법이 존재
+
+1. new, object, save 방식
+
+```js
+export const postUpload = async (req, res) => {
+  // 객체 작성
+  const { title, description, hashtags } = req.body;
+  const video = new Video({
+    title: title,
+    description: description,
+    createdAt: Date.now(),
+    hashtags: hashtags.split(",").map((word) => `#${word}`),
+    meta: {
+      views: 0,
+      rating: 0,
+    },
+  });
+  // DB는 쓰기까지 시간이 걸리므로 await 필수
+  await video.save(); // 객체 실제 DB에 저장
+  return res.redirect("/");
+};
+```
+
+2. create 방식 (추천)
+
+- 당연히 try, catch 구문으로 error를 잡아줘야한다.
+
+```js
+export const postUpload = async (req, res) => {
+  // 객체 작성
+  const { title, description, hashtags } = req.body;
+  await video.create({
+    title: title,
+    description: description,
+    createdAt: Date.now(),
+    hashtags: hashtags.split(",").map((word) => `#${word}`),
+    meta: {
+      views: 0,
+      rating: 0,
+    },
+  });
+  return res.redirect("/");
+};
+```
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> cmd에서 DB 확인하는 방법 </br>
+
+```js
+// 기본적인 명령어는 help로 확인가능
+
+> mongo // mongoDB 커맨드 쉘 오픈
+> show dbs // wetube 항목이 있는지 확인
+> use wetube
+> show collections // 커다란 덩어리의 데이터들 확인
+> db.videos.find() // 해당 컬렉션 안의 정보 표시
+```
+
+</br>
+
+---
+
+## #6.17 Exceptions and Validation
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> </br>

@@ -5,7 +5,8 @@ export const home = async (req, res) => {
   // DB의 promise 통신이라 순서대로 실행될 것
   try {
     const videos = await Video.find({});
-    return res.render("home", { pageTitle: "Home", videos: [] });
+    console.log(videos);
+    return res.render("home", { pageTitle: "Home", videos });
   } catch {
     return res.render("server-error");
   }
@@ -31,13 +32,14 @@ export const getUpload = (req, res) => {
   return res.render("upload", { pageTitle: "Upload Video" });
 };
 
-export const postUpload = (req, res) => {
+export const postUpload = async (req, res) => {
   // 추가로 올라갈 비디오 obj가 여기 서술됨
   const { title, description, hashtags } = req.body;
-  const video = new Video({
-    title,
-    description,
+  await Video.create({
+    title: title,
+    description: description,
     createdAt: Date.now(),
+    hashtags: hashtags.split(",").map((word) => `#${word}`),
     meta: {
       views: 0,
       rating: 0,
