@@ -1202,4 +1202,120 @@ export const postUpload = async (req, res) => {
 
 ## #6.17 Exceptions and Validation
 
-<span style="color:#D9F8C4">[MONGOOSE]</span> </br>
+<span style="color:#D9F8C4">[MONGOOSE]</span> 모델(스키마)에 required / default 주기 </br>
+
+- 반드시 들어가야할 항목에는 스키마 단계에서 required: true 속성을 주자
+- default 속성을 주면 유저가 따로 입력하지 않아도 자동 생성된다.
+- default 속성에 함수를 줄 때, ()를 같이 주지 않도록 한다. </br>
+  (같이 줄 경우 해당 스키마가 저장되는 시점(모델이 생성되는 시점이 아니라)에 함수가 실행된다.)
+
+```js
+// models/Video.js 에서..
+
+const videoSchema = new mongoose.Schema({
+  // 각 항목의 타입만을 정의 (디테일을 적는게 아니라)
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  createdAt: { type: Date, required: true, default: Date.now }, // Date.now()가 아님에 유의
+  hashtags: [{ type: String }],
+  // meta를 스키마에 줌으로써, post에 쓸 함수 길이가 짧아짐.
+  meta: {
+    views: { type: Number, default: 0, required: true },
+    rating: { type: Number, default: 0, required: true },
+  },
+});
+```
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> error 받아서 올리기 </br>
+
+- try, catch 구문으로 error를 검출한다.
+- 이 때, try, catch 각각에 반드시 return 이 들어가야 제대로 종료시킬 수 있다.
+
+```js
+// videoController.js 에서..
+
+export const postUpload = async (req, res) => {
+  // 추가로 올라갈 비디오 obj가 여기 서술됨
+  const { title, description, hashtags } = req.body;
+  try {
+    await Video.create({
+      title,
+      description,
+      hashtags: hashtags.split(",").map((word) => `#${word}`),
+    });
+    return res.redirect("/"); // try에 return 포함
+  } catch (error) {
+    return res.render("upload", {
+      // catch에도 return 있음
+      pageTitle: "Upload Video",
+      errorMessage: error._message, // pug와 연결될 error 변수
+    });
+  }
+};
+```
+
+```js
+// upload.pug에서..
+
+extends base.pug
+
+block content
+    if errorMessage // 위에서 넘긴 error 변수를 불러옴
+        span=errorMessage
+        ..
+```
+
+</br>
+
+---
+
+## #6.18 More Schema
+
+<span style="color:yellow">[JS]</span> string.trim( ) 문법 </br>
+
+- 양 끝 string의 빈 공간을 삭제한다.
+- 이 문법은 몽구스에도 적용 가능하다. </br>
+  (몽구스의 자세한 string 규칙은 아래 링크 참조) </br>
+  https://mongoosejs.com/docs/schematypes.html
+
+```js
+"     h  1     ".trim();
+// output : "h  1"
+```
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> 스키마에 maxLength 제한을 줄때, html도 maxlength를 같이 줘야하는 이유 </br>
+
+- html에 제한을 주면 유저는 정해진 글자수만 들어간다는 걸 알 수 있다.
+- 하지만 html은 언제든지 유저가 고칠 수 있다.
+- 그렇기에 보다 확실한 규칙을 정하려면 스키마에도 글자수 제한을 걸어야 한다.
+- 이것이 둘 다에 제한을 거는 이유다.
+
+```js
+// model/Video.js 에서..
+
+const videoSchema = new mongoose.Schema({
+  // 스키마 단계에서 글자 수 제한(maxLength, minLength)을 걸어준다.
+  title: { type: String, required: true, trim: true, maxLength: 80 },
+  description: { type: String, required: true, trim: true, minLength: 20 },
+```
+
+```js
+// upload.pug에서..
+
+form((method = "POST"));
+// 글자수 제한을 maxlength, minlength로 같이 걸어준다.
+input(
+  (name = "title"),
+  (placeholder = "Title"),
+  required,
+  (type = "text"),
+  (maxlength = 80)
+);
+input(
+  (name = "description"),
+  (placeholder = "Description"),
+  required,
+  (type = "text"),
+  (minlength = 20)
+);
+```
