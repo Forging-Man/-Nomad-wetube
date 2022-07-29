@@ -11,10 +11,8 @@ import {
 
 const videoRouter = express.Router();
 
-videoRouter.get("/:id(\\d+)", watch);
-videoRouter.route("/:id(\\d+)/edit").get(getEdit).post(postEdit);
-
-// 추가 연습 get, post
+videoRouter.get("/:id([0-9a-f]{24})", watch); // MongoDB id 규칙만 받아들임(16진수 24문자)
+videoRouter.route("/:id([0-9a-f]{24})/edit").get(getEdit).post(postEdit);
 videoRouter.route("/upload").get(getUpload).post(postUpload);
 
 export default videoRouter;

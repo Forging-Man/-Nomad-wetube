@@ -1319,3 +1319,111 @@ input(
   (minlength = 20)
 );
 ```
+
+</br>
+
+---
+
+## #6.19 Video Detail
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> MongoDB id 특징 </br>
+
+- 16진수로 이루어진 랜덤한 24글자
+- 따라서, 정규식으로 라우터도 이를 인식할 수 있으면 된다.
+
+```js
+// videoRouter.js 에서..
+
+// 정규식 내용 :  숫자, 소문자 알파벳 24글자
+videoRouter.get("/:id([0-9a-f]{24})", watch);
+```
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> id로 db찾아서 리턴하기 </br>
+
+- 몽구스 함수 "DB_model.findById(id)" 를 사용
+
+```js
+// videoController.js 에서..
+
+export const watch = async (req, res) => {
+  const { id } = req.params;
+  const video = await Video.findById(id); // 해당하는 id를 db에서 찾아와 리턴
+  return res.render("watch", { pageTitle: video.title, video });
+};
+```
+
+</br>
+
+---
+
+## #6.20 Edit Video P1
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> 존재하지 않는 id로 접속했을 때의 대처법 </br>
+
+- 아무런 응답이 없으면 무한로딩에 걸린다.
+- 따라서 이런 경우를 대비해 "에러전용 페이지"를 따로 만드는게 낫다.
+
+```js
+// videoController.js 에서..
+
+export const watch = async (req, res) => {
+  const { id } = req.params;
+  const video = await Video.findById(id);
+  // if문에 에러 발생시의 조건을 쓰고, else 문에 정상일 때의 조건을 쓴다.
+  if (!video) {
+    // video가 존재하지 않을 시, 404페이지로 날려버려.
+    // 반드시 return 구문을 써서 함수 자체를 종료시켜야 한다.
+    return res.render("404", { pageTitle: "Video not found." });
+  }
+  return res.render("watch", { pageTitle: video.title, video });
+};
+```
+
+<span style="color:yellow">[JS]</span> array를 다시 string 변환 </br>
+
+- array.join( ) 함수를 쓴다.
+
+```js
+["hello", "man", "me"].join();
+// output : "hello, man, me"
+```
+
+</br>
+
+---
+
+## #6.21 Edit Video P2
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> update 내용을 post 하는 법 (귀찮은 ver: 잘 안씀) </br>
+
+- 하나하나 바뀌는 것들을 다시 새로 대입한다.
+
+```js
+// videoController.js 에서..
+
+export const postEdit = async (req, res) => {
+  const { id } = req.params;
+  // update될 각 항목들을 미리 지정
+  const { title, description, hashtags } = req.body;
+  const video = await Video.findById(id);
+  if (!video) {
+    return res.render("404", { pageTitle: "Video not found." });
+  }
+  // update 항목들을 각각 대입
+  video.title = title;
+  video.description = description;
+  video.hashtags = hashtags
+    .split(",")
+    .map((word) => (word.startsWith("#") ? word : `#${word}`)); // 처음부터 #이 붙은 단어는 #안붙이도록 한 문장 if문 작성
+  await video.save();
+  return res.redirect(`/videos/${id}`);
+};
+```
+
+</br>
+
+---
+
+## #6.22 Edit Video P3
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> </br>
