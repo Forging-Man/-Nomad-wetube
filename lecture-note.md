@@ -1426,4 +1426,113 @@ export const postEdit = async (req, res) => {
 
 ## #6.22 Edit Video P3
 
+<span style="color:#D9F8C4">[MONGOOSE]</span> update 내용을 post 하는 또 다른 방법 (잘쓰는 ver)</br>
+
+- Model.findByIdAndIpdate(id, {바꿀 변수명들})
+- Model.findById 와의 차이점 : <- id만 찾아서 리턴할 뿐. 그래서 바꿀 내용은 모두 수동으로 재설정 해야했음.
+
+```js
+// videoController.js 에서..
+
+await Video.findByIdAndUpdate(id, {
+  title,
+  description,
+  hashtags: hashtags
+    .split(",")
+    .map((word) => (work.startsWith("#") ? word : `#${word}`)),
+});
+```
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> 찾고 싶은 DB가 존재하는지 조건검색 </br>
+
+- Model.exists({조건검색}) </br>
+  (조건 예 : {\_id : id}, {title: "hello"}..)
+- 결과값은 true / false
+
+```js
+// videoController.js 에서..
+
+const video = await Video.exists({ _id: id });
+```
+
+</br>
+
+---
+
+## #6.23 Middlewareㄴ
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> 몽구스 middleware란? </br>
+
+- DB 생성이나 업뎃 전에 작동해야할 중간 함수를 지정 가능
+- Model.js에서 만들고 model 객체가 만들어지기 전에 관련 함수를 선언한다.
+- 모델 객체를 가리키는 this를 주로 쓸거다.
+- Model_call_func.pre("save", function() {함수내용}) </br>
+  (콜백함수로 arrow func를 쓰면 this대상이 달라지므로 function을 써라.)
+
+```js
+// models/Video.js 에서..
+
+// 비디오 객체 생성시(save hook) 해당 함수 실행
+videoSchema.pre("save", function () {
+  this.hashtags = this.hashtags[0]
+    .split(",")
+    .map((word) => (word.startsWith("#") ? word : `#${word}`));
+});
+
+// 모델 객체 선언 전에 미들웨어 선언
+const Video = mongoose.model("Video", videoSchema);
+```
+
+<span style="color:#D9F8C4">[MONGO-DB]</span> 몽고DB 모든 데이터 삭제 </br>
+
+```js
+// 몽고 shell에서..
+
+> show dbs
+> use wetube // db 저장소 진입
+> db.videos.find({}) // 모든 콜렉션의 db 확인
+> db.videos.remove({}) // 모두 삭제
+```
+
+</br>
+
+---
+
+## #6.24 Statics
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> Model.static의 필요성 </br>
+
+- findByIdAndUpdate() 등에는 Model.pre("save") 가 먹히지 않는다. (hook이 안된다.)
+- 따라서 Model.findById() 처럼, 몽구스 내부에서 작동하는 또 다른 함수를 정의할 필요가 있다.
+- Model.static("함수명", function(val) { 함수내용 }) 을 사용하면, 개발자가 따로 정의한 함수를 호출해서 Model 객체에 적용 가능하다.
+- 함수 내용물에는 반드시 return 구문을 사용해야 한다.
+- static 결과물을 호출시에는 Model."함수명" 으로 호출한다.
+
+```js
+// models/Video.js 에서..
+
+// static으로 모델객체 전용 새로운 함수를 정의
+videoSchema.static("formatHashtags", function (hashtags) {
+  return hashtags
+    .split(",")
+    .map((word) => (word.startsWith("#") ? word : `#${word}`));
+});
+```
+
+```js
+// videoController.js 에서..
+
+await Video.create({
+  title,
+  description,
+  hashtags: Video.formatHashtags(hashtags), // static으로 정의한 함수명을 호출
+});
+```
+
+</br>
+
+---
+
+## #6.25
+
 <span style="color:#D9F8C4">[MONGOOSE]</span> </br>
