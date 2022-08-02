@@ -1533,6 +1533,89 @@ await Video.create({
 
 ---
 
-## #6.25
+## #6.25 Delete Video
 
-<span style="color:#D9F8C4">[MONGOOSE]</span> </br>
+<span style="color:#D9F8C4">[MONGOOSE]</span> DB 찾아서 delete 하기 </br>
+
+- Model.findByIdAndDelete(id) 로 해결 가능
+
+```js
+// videoController.js 에서..
+
+// 지우기 전용 함수 새로 선언
+export const deleteVideo = async (req, res) => {
+  const { id } = req.params;
+  await Video.findByIdAndDelete(id); // id 호출해서 삭제
+  return res.redirect("/");
+};
+```
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> delete, remove 차이 </br>
+
+- remove는 레거시 함수
+- 그냥 delete 써라.
+
+</br>
+
+---
+
+## #6.26 Search P1
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> DB 표시 정렬순서 변경 </br>
+
+- Model.find({..}).sort({기준: 오름/내림차순}) 으로 정렬 가능
+- 오름차순 : "asc", 1
+- 내림차순 : "desc", -1
+
+```js
+// 내림차순으로 DB표시
+const videos = await Video.find({}).sort({ createdAt: "desc" });
+```
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> Search 값을 컨트롤러로 가져오는 법 </br>
+
+- req.query로 input값을 가져올 수 있다.
+- 정확히는 input 에서 submit을 통해 변경된 URL값을 가져올 수 있게 된다.
+
+```js
+// req.query를 통해, URL 값을 가져올 수 있다.
+const { keyword } = req.query;
+```
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> req.params / req.body / req.query 차이점 정리 </br>
+
+- req.params : id값을
+- req.body : key: value값으로 저장된 값들을 불러 올 수 있다 (즉, form 형태 호출 가능)
+- req.query : input으로 제출된 URL값을 픽업할 수 있다.
+
+---
+
+## #6.27 Search P2
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> 몽고DB 검색시, 정규식(regex)을 받는 법 </br>
+
+- 몽고DB 자체에서 정규식 검색을 제공한다.
+- 정규식 검색시 $regex: (정규식 규칙객체) 를 선언한다.
+- (정규식 규칙객체) 선언시에는 보통 new RegExp()를 사용한다. </br>
+  (이걸 안써도 되지만, 이걸 쓰는게 가독성 측면에서 더 좋아서 추천한다.)
+
+```js
+// videoController.js 에서..
+
+export const search = async (req, res) => {
+  const { keyword } = req.query;
+  let videos = [];
+  if (keyword) {
+    videos = await Video.find({
+      title: {
+        // 몽고DB에서 정규식을 받을거라 선언하고,
+        // RegExp 라는 정규식 객체 선언문에다가
+        // (`${keyword}$`, "i") 라는 규칙을 넣는다. (keyword로 문장이 끝난다는 뜻)
+        // 즉, 해당 규식을 가진 정규식 객체만을 몽고DB title에서 검색한다.
+        $regex: new RegExp(`${keyword}$`, "i"),
+      },
+    });
+  }
+  return res.render("search", { pageTitle: "Search", videos });
+};
+```
