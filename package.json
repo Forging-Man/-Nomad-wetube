@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/Forging-Man/-Nomad-wetube#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "express": "^4.18.1",
     "mongoose": "^6.4.6",
     "morgan": "^1.10.0",

@@ -1,5 +1,6 @@
 import "./db";
 import "./models/Video";
+import "./models/User";
 import app from "./server";
 
 const PORT = 4000; // 백엔드 관습 포트 4000

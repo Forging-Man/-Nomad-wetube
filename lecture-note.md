@@ -1461,7 +1461,7 @@ const video = await Video.exists({ _id: id });
 
 ## #6.23 Middlewareㄴ
 
-<span style="color:#D9F8C4">[MONGOOSE]</span> 몽구스 middleware란? </br>
+<span style="color:#D9F8C4">[MONGOOSE]</span> 몽구스 middleware란? .pre( ) 예제 </br>
 
 - DB 생성이나 업뎃 전에 작동해야할 중간 함수를 지정 가능
 - Model.js에서 만들고 model 객체가 만들어지기 전에 관련 함수를 선언한다.
@@ -1491,7 +1491,8 @@ const Video = mongoose.model("Video", videoSchema);
 > show dbs
 > use wetube // db 저장소 진입
 > db.videos.find({}) // 모든 콜렉션의 db 확인
-> db.videos.remove({}) // 모두 삭제
+> db.videos.remove({}) // 모두 삭제 (remove가 레거시 코드라, 아래코드 추천)
+> db.videos.deleteMany({}) // 모두 삭제
 ```
 
 </br>
@@ -1588,6 +1589,8 @@ const { keyword } = req.query;
 - req.body : key: value값으로 저장된 값들을 불러 올 수 있다 (즉, form 형태 호출 가능)
 - req.query : input으로 제출된 URL값을 픽업할 수 있다.
 
+</br>
+
 ---
 
 ## #6.27 Search P2
@@ -1619,3 +1622,54 @@ export const search = async (req, res) => {
   return res.render("search", { pageTitle: "Search", videos });
 };
 ```
+
+</br>
+
+---
+
+## #7.0 Create Account P1
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> Schema, unique 속성 </br>
+
+- DB를 만들 때, 해당 값을 유일하게 갖는 객체를 만든다. </br>
+  (ex : 이름, 메일주소 등)
+
+```js
+// models/User.js 에서..
+
+const userSchema = new mongoose.Schema({ // schema 선언시
+  email: { type: String, required: true, unique: true }, // unique 속성 부여
+  username: { type: String, required: true, unique: true },..}})
+  // email과 username은 DB 객체에서 고유값을 가지게 됨
+```
+
+</br>
+
+---
+
+## #7.2 Create Account P3
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> bcrypt 모듈이란? </br>
+
+- 비밀번호를 hash 형식으로 바꾸어주는 JS전용 모듈
+- rainbow table 대책도 되어있어 보안성도 높다.
+- bycrypt.hash(패스워드대상, saltround 수) </br>
+  saltround : 소금을 치는 것 마냥, hash에 대한 hash를 몇번 반복할건지 선택.
+- Hash 기술 : 일방향 함수로 역계산이 불가능한 값을 제공.
+
+```js
+> npm i bcrypt
+
+// models/User.js 에서..
+
+userSchema.pre("save", async function () {
+  // saltRound 5로 hash 비번 생성
+  this.password = await bcrypt.hash(this.password, 5);
+});
+```
+
+</br>
+
+---
+
+## #7.3
