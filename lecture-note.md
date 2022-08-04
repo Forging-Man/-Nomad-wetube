@@ -1672,4 +1672,75 @@ userSchema.pre("save", async function () {
 
 ---
 
-## #7.3
+## #7.3 Form Validation
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> $or 오퍼레이터 </br>
+
+- DB find 또는 exists 메소드에서 사용가능한 오퍼레이터
+- 여러 값 중 하나라도 히트하면 true를 반환
+
+```js
+// userController.js 에서..
+
+const exists = await User.exists({ $or: [{ username }, { email }] }); // username 또는 email 중 하나라도 이미 존재한다면 에러 출력
+if (exists) {
+  return res.render("join", {
+    pageTitle,
+    errorMessage: "This username/email is already taken.",
+  });
+}
+```
+
+</br>
+
+---
+
+## #7.4 Status Codes
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> status code (상태코드) 보내는 법 </br>
+
+- res.status(400).render("join"...) 식으로 해당 코드가 실행될 시 보낼 상태코드를 미리 지정 가능
+- 크롬같은 브라우저는 내용물이 아니라 상태코드를 신호로 받아서 반응하기도 한다.
+- 따라서 적절한 상태코드를 리턴시켜야 적절한 반응형 웹을 만들 수 있다.
+- 상태코드 리스트는 아래 참조 </br>
+  https://ko.wikipedia.org/wiki/HTTP_%EC%83%81%ED%83%9C_%EC%BD%94%EB%93%9C
+- 자주쓰는 상태코드 목록 </br>
+  200(OK) : 서버가 요청을 제대로 처리했단 뜻. </br>
+  400(Bad Request) : 서버가 요청의 구문을 인식하지 못할 때 발생. 클라측에 문제가 있을때 주로 발생 </br>
+  404(Not Found) : 서버가 요청한 페이지를 찾을 수 없을 때 발생. 서버에 존재하지 않는 페이지에 대한 요청이 있을 경우, 서버는 이 코드를 제공
+
+```js
+// userController.js 에서..
+
+if (exists) {
+    // 이미 있는 아이디나 메일주소로 회원가입을 할 경우, 400 상태코드를 보낸다.
+    return res.status(400).render("join", {
+      pageTitle,
+      errorMessage: "This username/email is already taken.",
+    });
+```
+
+</br>
+
+---
+
+## #7.6 Login P2
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> 로그인시 패스워드 확인방법 : bcrypt.compare(input_pass, hash_pass) </br>
+
+- hash 코드들끼리 비교해서 맞는지 틀린지를 true/false 리턴한다.
+- if문과 함께써서 true(or false)가 리턴되었다면 어떤 처리를 할 건지도 명시한다.
+
+```js
+// userContorller.js 에서..
+
+const ok = await bcrypt.compare(password, user.password); // 로그인 폼에 입력한 패스워드와, 기존 저장되어있던 패스워드의 hash값을 비교한다.
+if (!ok) {
+  // 서로의 hash값이 다르다면(false) 에러처리한다.
+  return res.status(400).render("login", {
+    pageTitle,
+    errorMessage: "Wrong password",
+  });
+}
+return res.redirect("/"); // true 처리되면 redirect한다.
+```
