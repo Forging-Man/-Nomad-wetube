@@ -1744,3 +1744,98 @@ if (!ok) {
 }
 return res.redirect("/"); // true 처리되면 redirect한다.
 ```
+
+</br>
+
+---
+
+## #7.7-8 Sessions and Cookies P1, P2
+
+<span style="color:#00FFFF">[EXPRESS]</span> 세션 vs 쿠키 </br>
+
+- express에서 세션/쿠키를 구현하기 위해서는 express-session을 설치해야 한다.
+- 둘 다 서버와 클라이언트가 소통하기 위한 데이터 쪼가리.
+- 다만, 저장위치 or 라이프사이클에 차이가 있다.
+- 쿠키 : 클라이언트 PC에 저장 / 정해진 만료기간이 코드내에 따로 존재
+- 세션 : 서버쪽에 저장 / 정해진 만료기간이 있긴 하지만, 브라우저를 닫으면 강제로 삭제 </br>
+  모두 다 세션으로 하면 좋겠지만, 그러면 서버 자원이 부족해지기 때문에 모든 사이트가 세션과 쿠키를 병행하는 편이다. </br>
+  브라우저마다 세션값이 다르다.
+- \*부록 : 캐시란? </br>
+  웹 페이지 요소를 저장하기 위한 임시 저장소
+
+```js
+> npm i express-session
+
+// server.js에서..
+
+// router 전에 아래 미들웨어 선언
+app.use(
+  session({
+    secret: "Hello!",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+
+// 세션이 만들어졌는지 확인을 위해 아래 코드 입력
+app.use((req, res, next) => {
+  req.sessionStore.all((error, sessions) => {
+    console.log(sessions); // 출력이 된다면 세션 obj가 생긴거다.
+    next();
+  });
+});
+```
+
+</br>
+
+---
+
+## #7.9 Logged In User P1
+
+<span style="color:#00FFFF">[EXPRESS]</span> 세션에 로그인 여부 정보 추가하기 </br>
+
+- 세션 obj를 만질 수 있게 되었으므로, 로그인했다는 정보를 그 안에 추가한다.
+
+```js
+// userController.js 에서..
+
+export const postLogin = ..
+...
+// login이 성공했다면, 세션 obj에 아래 항목을 추가
+  req.session.loggedIn = true;
+  req.session.user = user;
+```
+
+</br>
+
+---
+
+## #7.10 Logged In User P2
+
+<span style="color:#00FFFF">[EXPRESS]</span> res.locals 이란? (템플릿 페이지가 로그인을 인식하는 법) </br>
+
+- res 변수가 포함된 모든 템플릿 페이지에서 사용가능한 전역변수가 들어있음 </br>
+  (원래는 res.render시에 따로 변수를 건네줬지만, res.local안에 들어있는 것들은 그럴 필요가 없음)
+- 즉, res.locals에 로그인 정보를 넣으면 이걸통해 템플릿 페이지가 로그인을 인식할 수 있게 된다.
+
+```js
+// middlewares.js 에서..
+
+export const localsMiddleware = (req, res, next) => {
+  // 로그인을 위한 정보를 res.locals에 추가
+  // 각각의 key 이름(loggedIn, siteName..)은 pug(템플릿)에서 바로 사용 가능
+  res.locals.loggedIn = Boolean(req.session.loggedIn);
+  res.locals.siteName = "Wetube";
+  res.locals.loggedInUser = req.session.user;
+  console.log(res.locals);
+  next();
+};
+```
+
+</br>
+
+---
+
+## #7.12
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> </br>
