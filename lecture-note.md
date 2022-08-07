@@ -1836,6 +1836,112 @@ export const localsMiddleware = (req, res, next) => {
 
 ---
 
-## #7.12
+## #7.12 MongoStore
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> 세션 정보를 db에 저장하는 법 : connect-mongo 모듈 </br>
+
+- connect-mongo 모듈을 설치하고 사용한다.
+- https://www.npmjs.com/package/connect-mongo
+
+```js
+// connect-mongo 설치
+> npm i connect-mongo
+
+// server.js 에서..
+import MongoStore from "connect-mongo";
+
+app.use(
+  session({..
+  // MogoStore를 사용해서 세션을 가져올 주소를 지시
+  store: MongoStore.create({ mongoUrl: "mongodb://127.0.0.1:27017/wetube" })
+  ..}
+```
+
+</br>
+
+---
+
+## #7.13 Uninitialized Sessions
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> 로그인 한 사람의 정보만 세션 저장하기 : session 미들웨어 속성, saveUninitialized </br>
+
+- "초기화되지 않은 값을 저장하겠냐"고 묻는격이다.
+- 해당 값을 false로 하면 일반 방문자 정보는 저장안한다.
+- 로그인해서 loggedIn 정보 등이 갱신될때만 세션DB를 저장한다.
+
+```js
+// server.js 에서..
+
+app.use(
+  session({
+    ..
+    saveUninitialized: false,
+```
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> 세션 값을 자동으로 갱신저장하기 : resave </br>
+
+- 새로고침등 req때마다 세션값을 자동저장한다.
+- 잦은 저장은 동작 효율을 감소시키므로, 주로 false로 두고 신경끈다.
+
+```js
+// server.js 에서..
+
+app.use(
+  session({
+    ..
+    resave: false,
+```
+
+</br>
+
+---
+
+## #7.14 Expiration and Secrets
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> session 미들웨어에서 쿠키 유지시간 설정하기 : maxAge </br>
+
+- session 미들웨어 안에서 cookie: {maxAge: number(ms단위로)} 를 입력
+- 정한 시간만큼 로그인이 유지될거다.
+- 아무값도 입력하지 않는다면, 보통 14일을 부여한다.
+
+```js
+// server.js 에서..
+
+app.use(
+  session({
+    ..
+    cookie {
+      maxAge: 20000, (20초동안 로그인 유지)
+    }
+  })
+);
+```
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> session 미들웨어의 secret 이란? </br>
+
+- 쿠키에 서명하는데 사용되는 비밀번호
+- 이게 노출되면 다른 사람이 내 사이트마냥 쿠키를 만질 수 있음
+- 보안을 위해 무작위 알파벳이 추천된다.
+
+<span style="color:#D9F8C4">[MONGOOSE]</span> 공개하고 싶지 않은 string 등을 따로 저장하는 법 : .env파일 </br>
+
+- .env 파일을 따로 만들어, 거기다가 저장하고 필요할때마다 import한다.
+- import방식은
+- .env에는 API key등, 보안을 요하는 정보들을 적는다.
+- git에 .env는 올리지 않도록 한다. (gitignore에 .env추가)
+- .env에 저장하는 변수명은 관습상 모두 대문자로 쓴다.
+
+```js
+// .env에서..
+
+COOKIE_SECRET=dlfkaghdfkljh234kjfdshglkjasdfbvgklja
+DB_URL=mongodb://127.0.0.1:27017/wetube
+```
+
+</br>
+
+---
+
+## #7.15
 
 <span style="color:#D9F8C4">[MONGOOSE]</span> </br>
