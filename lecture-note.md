@@ -1942,6 +1942,72 @@ DB_URL=mongodb://127.0.0.1:27017/wetube
 
 ---
 
-## #7.15
+## #7.15 Environment Variables
 
-<span style="color:#D9F8C4">[MONGOOSE]</span> </br>
+<span style="color:#00FFFF">[EXPRESS]</span> .env 파일 안의 변수명을 인식하기 위한 모듈 : dotenv </br>
+
+- Node.js 는 process.env라는 함수가 기본적으로 내장되어 있음
+- dotenv는 .env 파일을 process.env 환경 변수로 로드하는 모듈임
+- 두 가지 도입 방법이 있음 </br>
+  1. require("dotenv").config() <표현식 방법 : 이 경우 모든 필요한 JS파일 맨 윗라인에 추가해야 함></br>
+  2. import "dotenv/config" <호이스팅 방법 : 추천>
+- 가장 맨 처음 실행되는 백엔드js 맨 윗라인에 import "dotenv/config"를 추가하는 것 만으로 모든 백엔드 js에서 변수 인식 가능해짐
+- require("dotenv").config()가 정의될때까지 .env 변수들은 인식되지 않을거임
+
+```js
+> npm i dotenv
+
+// init.js 에서..
+import "dotenv/config"; // 모든 JS에서 .env 변수 읽기 가능
+```
+
+</br>
+
+---
+
+## #7.16-17 Github Login P1, P2
+
+<span style="color:#00FFFF">[EXPRESS]</span> OAuth : 다른 사이트 계정으로 로그인하는 방식의 총칭 </br>
+
+- 다른 계정 사이트로 github 로그인을 통해 배운다.
+- pug에 링크를 추가하되, 각종 속성을 부여할 수 있다. </br>
+  1. client_id : 반드시 필요한 값. github OAuth를 신청하면 받는다. </br>
+  2. allow_signup : 우회링크된 github에서 계정을 새로 만들 수 있는 버튼을 추가할지 안할지 선택 </br>
+  3. scope : github에게 요구할 추가적인 유저정보를 적을 수 있음. 메일주소나 이름을 넘어 저장소를 삭제할 권한까지 요구할 수 있음. </br>
+     반드시 스페이스 공백으로 scope 요소들을 나눠야함. (ex> read:user user:email)
+- 각종 속성을 추가하면 URL이 너무 길어지고 관리가 어려워지므로, 따로 함수화하는걸 추천
+
+<span style="color:yellow">[JS]</span> obj를 받아서 URL로 트랜스폼하기 URLSearchParams.toString() </br>
+
+```js
+// 각종 속성을 다 넣은 URL의 예
+// PUG 에서..
+
+a(href="https://github.com/login/oauth/authorize?client_id=9fac726866be2ff14f36&allow_signup=false") Continue with Github &rarr;
+```
+
+```js
+// 함수화를 통해 속성들을 관리하기 쉽도록 바꾼 예
+// userControll.js 에서..
+
+export const startGithubLogin = (req, res) => {
+  const baseUrl = "https://github.com/login/oauth/authorize";
+  const config = {
+    client_id: "9dc842e1d17cad15dfb0",
+    allow_signup: false,
+    scope: "read:user user:email",
+  };
+  // URLSearchParams 객체화를 통해 URL 뒷부분을 쉽게 정의한다.
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+  return res.redirect(finalUrl);
+};
+```
+
+</br>
+
+---
+
+## #7.18
+
+<span style="color:#00FFFF">[EXPRESS]</span> </br>
