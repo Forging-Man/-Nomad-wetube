@@ -1969,7 +1969,8 @@ import "dotenv/config"; // 모든 JS에서 .env 변수 읽기 가능
 
 <span style="color:#00FFFF">[EXPRESS]</span> OAuth : 다른 사이트 계정으로 로그인하는 방식의 총칭 </br>
 
-- 다른 계정 사이트로 github 로그인을 통해 배운다.
+- 다른 계정 사이트로 github 로그인을 통해 배운다. </br>
+  https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps
 - pug에 링크를 추가하되, 각종 속성을 부여할 수 있다. </br>
   1. client_id : 반드시 필요한 값. github OAuth를 신청하면 받는다. </br>
   2. allow_signup : 우회링크된 github에서 계정을 새로 만들 수 있는 버튼을 추가할지 안할지 선택 </br>
@@ -2008,6 +2009,121 @@ export const startGithubLogin = (req, res) => {
 
 ---
 
-## #7.18
+## #7.18-20 Github Login P3, P4, P5
+
+<span style="color:#00FFFF">[EXPRESS]</span> OAuth 에서 가입승인 후, access token 받기 -> user 정보 얻기 </br>
+
+- token : 세션과 유사하지만, 하나하나 값이 다른 세션과는 달리 "출입증 카드"같은 단 인증된 단 하나의 값을 갖는다. 이는 일회용이라 한번 쓰고나면 반납한다.
+- 다소 복잡하지만 아래와 같은 절차로 코드를 작성한다. </br>
+- POST 파트 </br>
+
+  1. 깃헙에서 인증 POST와 관련된 주소를 생성한다. (client_id, client_secret, code가 필요)
+  2. fetch를 통해 해당 주소를 읽어들이고 거기에 POST 한다. (node-fetch 설치필요) </br>
+     그 결과값을 변수에 저장한다. </br>
+     - nodeJS는 브라우저와 다르게 몇몇 함수를 지원하지 않는데, fetch가 대표적이다. 따로 모듈 설치가 필요한 이유. (node-fetch는 @2.6.1 버전으로 설치한다. 최신버전은 안됨)
+  3. 해당 결과값은 날 것에 가까우므로, fetch시 header 변수를 통해 json을 읽을 수 있도록 한다. (Accept: "application/json" 추가)
+  4. 결과값을 .json()으로 바꿔 저장한다. (이제 POST 결과로 access token을 받게될 것)
+
+  </br>
+
+- GET 파트 </br>
+
+  1. fetch를 통해 GET관련 주소와 header로 access token을 넣는다. (Authorization: `token ${access_token}`)
+  2. 마찬가지로 이를 .json()로 바꾼다.
+  3. 해당 결과값을 출력하면 obj형태로 각종 깃헙과 관련된 각종 유저정보가 들어있게 된다.
+
+  </br>
+
+- GET 파트 anotehr </br>
+  scope에 user:email을 추가했는데도 깃헙에서 리턴된 유저정보에 email이 null일때
+
+  - 이는 email이 보이지 않도록 설정했을때 주로 발생한다.
+  - 일단 scope에서 email을 허락했으니, 우린 email을 볼 권한이 있다.
+  - 이를위해선 깃헙 REST API를 참조해야한다. </br>
+    https://docs.github.com/en/rest/reference/users
+
+    1. 깃헙에서 지시한 이메일 전용 url을 통해 fetch하도록 한다.
+    2. email이 여러개일 경우, 해당 arr에서 유효한 email만 찾아서 리턴한다.
+
+```js
+// userController.js 에서..
+
+// POST를 통해 json으로 토큰을 받아오는 과정
+export const finishGithubLogin = async (req, res) => {
+  // 깃헙에서 지시한 전용 url로 이동
+  const baseUrl = "https://github.com/login/oauth/access_token";
+  const config = {
+    client_id: process.env.GH_CLIENT,
+    client_secret: process.env.GH_SECRET,
+    code: req.query.code,
+  };
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+  const tokenRequest = await (
+    // fetch와 headers 옵션을 통해 해당 url에 POST후 값 json 저장
+    await fetch(finalUrl, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+  ).json();
+```
+
+```js
+// userController.js 에서..
+
+// POST 이후 GET을 통해 user정보를 취득하는 과정
+if ("access_token" in tokenRequest) {
+    const { access_token } = tokenRequest;
+    // 깃헙에서 지시한 GET 전용 url
+    const apiUrl = "https://api.github.com";
+    const userData = await (
+      await fetch(`${apiUrl}/user`, {
+        headers: {
+          Authorization: `token ${access_token}`,
+        },
+      })
+    ).json();
+    console.log(userData);
+    // email이 프라이빗이라 유저정보에서 안 보일경우, 따로 깃헙에서 지시한 email 전용 url로 날라가서 가져오도록 설정
+    const emailData = await (
+      await fetch(`${apiUrl}/user/emails`, {
+        headers: {
+          Authorization: `token ${access_token}`,
+        },
+      })
+    ).json();
+    // 만약 많은 email을 등록한 상태라면, 현재 유효하고 최우선순위가 true인 email만 찾아서 리턴하도록 한다.
+    const email = emailData.find(
+      (email) => email.primary === true && email.verified === true
+    );
+    if (!email) {
+      return res.redirect("/login");
+    }
+  } else {
+    return res.redirect("/login");
+  }
+};
+```
+
+<span style="color:yellow">[JS]</span> array에서 특정 값 찾기 : find( )</br>
+
+```js
+// 기본 문법은 아래와 같다.
+arr.find(callback(element, index, array), thisArg);
+
+// 실제 적용은 아래와 같다.
+// emailData라는 array가 이미 있다고 가정하고,
+const email = emailData.find(
+  (email) => email.primary === true && email.verified === true
+);
+```
+
+</br>
+
+---
+
+## #7.21 Github Login P6
 
 <span style="color:#00FFFF">[EXPRESS]</span> </br>
