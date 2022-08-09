@@ -2126,4 +2126,48 @@ const email = emailData.find(
 
 ## #7.21 Github Login P6
 
+<span style="color:#00FFFF">[EXPRESS]</span> 이전에 깜빡하고 사이트에 회원가입해서 만든 이메일 주소와 OAuth에 사용된 이메일과 가 동일할 때, 로그인 규칙 만드는법 </br>
+
+- 여러가지 옵션이 있을 수 있다.
+- 이 강의에서는 같은 email주소라면, 그냥 로그인시키는 방법을 쓸거다.
+
+```js
+// userController.js 에서..
+
+export const finishGithubLogin = async (req, res) => {
+  ...
+  // github 의 유효한 eamil을 불러오고
+  const emailObj = emailData.find(
+      (email) => email.primary === true && email.verified === true
+    );
+  // 해당 github email이 기존 User DB에 있는 email과 충돌하는지 확인한다.
+  const existingUser = await User.findOne({ email: emailObj.email });
+    // 만약 기존 DB에 있는 email 주소와 같다면 그냥 로그인 시킨다.
+    if (existingUser) {
+      req.session.loggedIn = true;
+      req.session.user = existingUser;
+      return res.redirect("/");
+    // 만약 기존 DB에 없는 email 이라면, github 유저정보를 토대로 새유저 DB를 생성하고 로그인시킨다.
+    } else {
+      const user = await User.create({
+        name: userData.name,
+        username: userData.login,
+        email: emailObj.email,
+        password: "",
+        socialOnly: true,
+        location: userData.location,
+      });
+      req.session.loggedIn = true;
+      req.session.user = user;
+      return res.redirect("/");
+    }
+  ...
+```
+
+</br>
+
+---
+
+## #7.22
+
 <span style="color:#00FFFF">[EXPRESS]</span> </br>
