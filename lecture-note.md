@@ -2168,6 +2168,17 @@ export const finishGithubLogin = async (req, res) => {
 
 ---
 
-## #7.22
+## #7.22 Log Out
 
-<span style="color:#00FFFF">[EXPRESS]</span> </br>
+<span style="color:#00FFFF">[EXPRESS]</span> 세션(로그인정보)를 파기하는 방법 = 로그아웃 활성화 </br>
+
+- req.session.destroy(callback) : 세션을 파기하고 콜백을 호출 (콜백에 빈칸 가능)
+
+```js
+// userController.js 에서..
+
+export const logout = (req, res) => {
+  req.session.destroy(); // 세션파기, 빈 콜백
+  return res.redirect("/");
+};
+```
