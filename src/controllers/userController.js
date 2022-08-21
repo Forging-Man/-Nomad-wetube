@@ -112,6 +112,7 @@ export const finishGithubLogin = async (req, res) => {
       (email) => email.primary === true && email.verified === true
     );
     if (!emailObj) {
+      // set notification
       return res.redirect("/login");
     }
     let user = await User.findOne({ email: emailObj.email });
@@ -134,7 +135,13 @@ export const finishGithubLogin = async (req, res) => {
   }
 };
 
-export const edit = (req, res) => res.send("Edit User");
+export const getEdit = (req, res) => {
+  return res.render("edit-profile", { pageTitle: "Edit Profile" });
+};
+export const postEdit = (req, res) => {
+  return res.render("edit-profile");
+};
+
 export const logout = (req, res) => {
   req.session.destroy();
   return res.redirect("/");

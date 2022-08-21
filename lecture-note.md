@@ -2182,3 +2182,15 @@ export const logout = (req, res) => {
   return res.redirect("/");
 };
 ```
+
+## <span style="color:#00FFFF"> 7단원은 전체적으로 한 번 더 들어야 할 듯 </span>
+
+</br>
+
+---
+
+## #8.1 Protector and Public Middlewares
+
+<span style="color:#00FFFF">[EXPRESS]</span> 로그인 안한 유저가 /users/edit 을 직접 입력하여 들어올 경우, 우회시키는 방법 </br>
+
+-
