@@ -2193,4 +2193,76 @@ export const logout = (req, res) => {
 
 <span style="color:#00FFFF">[EXPRESS]</span> 로그인 안한 유저가 /users/edit 을 직접 입력하여 들어올 경우, 우회시키는 방법 </br>
 
--
+- 미들웨어에서 로그인 여부를 체크한 후, 상황에 따라 우회시킨다.
+- 강의에선 로그인을 한 경우와, 하지 않는 경우 각각 따로 미들웨어를 작성했다.
+
+```js
+// middlewares.js 에서..
+
+// 로그인을 이미 한 경우, 항상 다음 라우터 콜백 함수로 보냄
+export const protectorMiddleware = (req, res, next) => {
+  if (req.session.loggedIn) {
+    return next();
+  } else {
+    // 로그인을 하지 않은 경우, 항상 login 페이지로 보냄
+    return res.redirect("/login");
+  }
+};
+
+// 로그인을 하지 않은 경우, 항상 다음 라우터 콜백 함수로 보냄
+export const publicOnlyMiddleware = (req, res, next) => {
+  if (!req.session.loggedIn) {
+    return next();
+  } else {
+    // 로그인을 한 경우, 항상 HOME으로 보냄
+    return res.redirect("/");
+  }
+};
+```
+
+<span style="color:#00FFFF">[EXPRESS]</span> 라우터에서 get과 post에 한꺼번에 적용되는 미들웨어 호출하는 방법</br>
+
+- Router_name.route("/").all(midleware_name).get(func_name).post(func_name)
+- get과 post 모두에게 적용되는 미들웨어를 추가한다.
+- 미들웨어 내부에서 next를 받은 경우, get/post 에 맞춰서 해당 func를 호출한다.
+
+```js
+// rootRouter.js 에서..
+
+rootRouter
+  .route("/login")
+  // 이미 로그인 되있는 경우는 미들웨어에서 캐치 후, HOME으로 돌려버린다.
+  .all(publicOnlyMiddleware)
+  .get(getLogin)
+  .post(postLogin);
+```
+
+</br>
+
+---
+
+## #8.2 Edit Profile POST
+
+<span style="color:yellow">[JS]</span> 변수들을 조합해서 한꺼번에 불러오기 </br>
+
+- ES6 기능
+- 변수 호출시, {변수 그룹명: {변수명}..} 식으로 호출한다.
+
+```js
+// userController.js 에서..
+
+const {
+  session: {
+    user: { _id },
+  },
+  body: { name, email, username, location },
+} = req;
+```
+
+</br>
+
+---
+
+## #8.3
+
+<span style="color:#00FFFF">[EXPRESS]</span> </br>
