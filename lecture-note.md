@@ -2241,7 +2241,7 @@ rootRouter
 
 ---
 
-## #8.2 Edit Profile POST
+## #8.2 Edit Profile POST P1
 
 <span style="color:yellow">[JS]</span> 변수들을 조합해서 한꺼번에 불러오기 </br>
 
@@ -2263,6 +2263,32 @@ const {
 
 ---
 
-## #8.3
+## #8.3 Edit Profile POST P2
 
-<span style="color:#00FFFF">[EXPRESS]</span> </br>
+<span style="color:#D9F8C4">[MONGOOSE] update 내용을 보존하는 방법 </br>
+
+- DB_Model.findByIdAndUpdate(\_id, {change_values}, {new: true})
+- 바뀌고 난 변수들을 저장한 DB객체를 리턴한다.
+- 마지막에 option중 하나인 new는 초기값이 default로, 바뀌기전의 DB객체를 리턴한다.
+- 바뀌고 난 DB객체를 리턴하기 위해서는 따로 new: true를 지정해야 한다.
+
+```js
+// userController.js 에서..
+
+// postEdit 부분 ->
+...
+const updatedUser = await User.findByIdAndUpdate(
+  _id, // _id로 찾은 후,
+  { name, email, username, location }, // form의 각 name에 들어있는 value를 업뎃
+  { new: true } // 업뎃 후의 DB객체 리턴
+);
+req.session.user = updatedUser; // 해당 객체를 세션에 덮어씌우기
+```
+
+</br>
+
+---
+
+## #8.5 Change Password P2 6분까지들음
+
+<span style="color:#00FFFF">[EXPRESS]</span> bycrypt로 이전 패스워드, 최신 패스워드 비교 방법 </br>
