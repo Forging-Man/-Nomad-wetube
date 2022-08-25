@@ -1,3 +1,5 @@
+import multer from "multer";
+
 export const localsMiddleware = (req, res, next) => {
   // 로그인을 위한 정보를 res.locals에 추가
   res.locals.loggedIn = Boolean(req.session.loggedIn);
@@ -21,3 +23,5 @@ export const publicOnlyMiddleware = (req, res, next) => {
     return res.redirect("/");
   }
 };
+
+export const uploadFiles = multer({ dest: "uploads/" });

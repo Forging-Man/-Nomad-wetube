@@ -1459,7 +1459,7 @@ const video = await Video.exists({ _id: id });
 
 ---
 
-## #6.23 Middlewareㄴ
+## #6.23 Middleware
 
 <span style="color:#D9F8C4">[MONGOOSE]</span> 몽구스 middleware란? .pre( ) 예제 </br>
 
@@ -2291,4 +2291,84 @@ req.session.user = updatedUser; // 해당 객체를 세션에 덮어씌우기
 
 ## #8.5 Change Password P2 6분까지들음
 
-<span style="color:#00FFFF">[EXPRESS]</span> bycrypt로 이전 패스워드, 최신 패스워드 비교 방법 </br>
+<span style="color:#00FFFF">[EXPRESS]</span> pw 변경시, DB와 session 모두를 업뎃하는 방법 </br>
+
+- DB만을 업뎃하게 할 수도 있지만, 만일을 위해 둘 다 업뎃하는게 낫다. </br>
+  (만일이란, PW변경 후에도 session 로그아웃을 하지않고 PW와 관련된 작업을 진행할 경우를 말한다.)
+
+```js
+// userController.js 에서..
+
+// postChangePassword 함수 부분
+...
+  // session 에서 현재 로그인한 유저의 패스워드 정보를 가져온다.
+  const {
+    session: {
+      user: { _id },
+    },
+    body: { oldPassword, newPassword, newPasswordConfirmation },
+  } = req;
+
+  user.password = newPassword; // 처음 session으로 로그인한 유저의 패스워드도 바꿔준다. (session을 새로 로그인하지 않고 그대로 작업을 이어나갈 경우, 이렇게 하지 않으면 어디선가 충돌이 일어날 수 있으므로)
+  await user.save(); // 몽구스 미들웨어로 만들어둔 save 미들웨어롤 실행시켜, DB의 패스워드를 바꾼다.
+
+```
+
+</br>
+
+---
+
+## #8.6 File Uploads P1
+
+<span style="color:#7FFF00">[PUG]</span> 파일을 업로드 하기위한 form 작성법 </br>
+
+```js
+// edit-profile.pug 에서..
+
+form(method="POST", enctype="multipart/form-data") // multer를 받기위한 enctype(인코딩타입)
+        label(for="avatar") Avatar
+        input(type="file", id="avatar", name="avatar", accept="image/*") // 이미지 파일만을 인식하기위한 accept
+```
+
+<span style="color:#00FFFF">[EXPRESS]</span> multer : 서버에 파일 업로드를 위한 미들웨어 </br>
+
+- 사용법은 세 가지 절차를 따른다.
+
+  1. form 의 편집
+
+  - PUG등의 템플릿 안의 form을 enctype="mulpart/form-data"로 설정
+
+  2. 미들웨어 작성
+
+  - multer를 사용한 전용 미들웨어를 만든다.
+
+  ```js
+  import multer from "multer";
+  export const uploadFiles = multer({ dest: "uploads/" }); // upload폴더를 만들고 거기에 저장
+
+  // dest 옵션 : "파일 저장위치"
+  ```
+
+  3. 해당 미들웨어를 라우터(POST부)에 연결
+
+  ```js
+  userRouter
+    .route("/edit")
+    .all(protectorMiddleware)
+    .get(getEdit)
+    .post(uploadFiles.single("avatar"), postEdit);
+
+  // POST함수 전에 multer 미들웨어를 호출
+  // 파일을 하나만 가져올 경우는 .single("file인풋의 name")
+  // 미들웨어 배치 순서가 중요하므로, multer 미들웨어는 반드시 post 콜백 함수 앞에 위치시킨다.
+  ```
+
+  - 무사히 파일을 업로드하면 req.file이 생성된다. (req.body와는 별도다.)
+
+</br>
+
+---
+
+## #8.7 File Uploads P2
+
+<span style="color:#00FFFF">[EXPRESS]</span> </br>
