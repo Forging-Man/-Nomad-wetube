@@ -2371,4 +2371,51 @@ form(method="POST", enctype="multipart/form-data") // multer를 받기위한 enc
 
 ## #8.7 File Uploads P2
 
-<span style="color:#00FFFF">[EXPRESS]</span> </br>
+<span style="color:#00FFFF">[EXPRESS]</span> 아바타 사진 바꾸는법과 주의점 </br>
+
+- file을 업로드시, file.path가 생성된다.
+- 이 file.path를 항상 avatarUrl에 대입하도록 하면, file이 업로드되지 않았을 때 에러가 발생한다.
+- 따라서, file이 업로드 되어있는지부터 확인 후, file.path를 대입시키도록 코드를 짠다.
+
+> 한가지 명심해라 </br>
+> DB에 직접 파일을 올리는게 아니다. DB는 URL만 올리는거다.
+
+```js
+// userController.js 에서..
+
+// postEdit 부
+ const {
+    session: {
+      // req.session.user부에서 _id랑 avatarUrl을 같이 불러온다.
+      user: { _id, avatarUrl },
+      ...
+  const updatedUser = await User.findByIdAndUpdate(
+    _id,
+    { // update실행시, file 업로드를 통해 file이 존재한다면, 해당 url(file.path)을 새로 대입하고, file이 없다면 기존 url을 그대로 쓰도록한다.
+      avatarUrl: file ? file.path : avatarUrl,
+```
+
+</br>
+
+---
+
+## #8.8 Static Files and Recap
+
+<span style="color:#00FFFF">[EXPRESS]</span> express.static() : 파일을 서버에 노출시키는 방법 </br>
+
+- /uploads 경로를 라우터에 추가함과 동시에, express.static("/uploads")를 선언한다.
+- 이 작업을 빼먹을시, uploads 폴더안의 파일들을 끄집어낼 수 없다.
+- https://expressjs.com/ko/api.html#express.static
+
+```js
+//server.js 에서..
+
+// uploads 폴더 내부 파일을 열 수 있도록 한다.
+app.use("/uploads", express.static("uploads"));
+```
+
+</br>
+
+---
+
+## #8.9 Video Upload
