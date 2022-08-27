@@ -1536,7 +1536,7 @@ await Video.create({
 
 ## #6.25 Delete Video
 
-<span style="color:#D9F8C4">[MONGOOSE]</span> DB 찾아서 delete 하기 </br>
+<span style="color:#D9F8C4">[MONGOOSE]</span> DB 찾아서 삭제 하기 </br>
 
 - Model.findByIdAndDelete(id) 로 해결 가능
 
@@ -2419,3 +2419,28 @@ app.use("/uploads", express.static("uploads"));
 ---
 
 ## #8.9 Video Upload
+
+<span style="color:#00FFFF">[EXPRESS]</span> multer : 업로드 할 파일 용량 제한하기 </br>
+
+- limit 옵션과 fileSize 옵션을 혼합한다.
+- https://www.npmjs.com/package/multer
+
+```js
+// middleware.js에서..
+
+export const avatarUPload = multer({
+  dest: "uploads/avatars/",
+  // limits 옵션 중, fileSize 옵션을 byte로 추가
+  limits: {
+    fileSize: 3000000, // 3 MB에 해당
+  },
+});
+```
+
+</br>
+
+---
+
+## #8.11 Video Owner
+
+<span style="color:#00FFFF">[EXPRESS]</span> </br>
