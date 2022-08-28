@@ -2514,6 +2514,6 @@ export const watch = async (req, res) => {
 
 ---
 
-## #8.13 User's Video
+## #8.14 Bug Fig
 
 <span style="color:#00FFFF">[EXPRESS]</span> </br>
