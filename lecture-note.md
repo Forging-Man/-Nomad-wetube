@@ -2441,6 +2441,79 @@ export const avatarUPload = multer({
 
 ---
 
-## #8.11 Video Owner
+## #8.11 Video Owner P1
+
+<span style="color:#00FFFF">[EXPRESS]</span> video 객체에 user를 연결시키는 법 </br>
+
+- 업로드한 유저의 id가 video애 들어가면 된다.
+- 한 유저가 다수의 video를 업로드 하면, 해당 video들은 모두 한명의 유저아이디(owner)를 갖는다.
+
+- Video Model의 owner는 User모델의 objectId를 가져와야 한다. (아래코드참조)
+
+```js
+// models/Video에서..
+
+// video schema 부분
+  owner: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
+```
+
+```js
+// videoController.js 에서..
+
+export const postUpload = async (req, res) => {
+  // 업로드한 유저 세션에서 id를 따오고
+  const {
+    user: { _id },
+  } = req.session;
+  ...
+    try {
+      await Video.create({
+        ...
+        // 따온 id를 Video 모델에 추가한 owner 변수에 집어넣는다.
+        owner: _id,
+        ...
+```
+
+- 이렇게 넣은 owner 타입은 object이므로, pug에서 session id와 비교시는 String 치환을 해줘야한다.
+
+```js
+// watch.pug 에서..
+
+    if String(video.owner) === String(loggedInUser._id)
+    // owner와 현재 로그인한 session id가 같다면, 편집과 삭제 버튼을 표시
+        a(href=`${video.id}/edit`) Edit Video &rarr;
+        br
+        a(href=`${video.id}/delete`) Delete Video &rarr;
+```
+
+</br>
+
+---
+
+## #8.12 Video Owner P2
+
+<span style="color:#00FFFF">[EXPRESS]</span> populate() : 몽구스, 다른 model 문서를 참조해서 가져오기 </br>
+
+- video와 user를 연결할 때, Video/User 따로따로의 DB 컬렉션을 참조하기보단, Video 내부에서 User 내부 정보도 가져올 수 있게 하는게 효과적이다.
+- 이는 몽구스 내부의 populete()를 사용하면 편리하다.
+
+```js
+// videoController.js 에서..
+
+export const watch = async (req, res) => {
+  const { id } = req.params;
+  // Video model에 미리 owner의 ref로 User model을 지정한다.
+  // populate로 owner 변수를 불러오면, User 객체를 통째로 불러온다.
+  const video = await Video.findById(id).populate("owner");
+  ...
+
+// output : User 모델 통째
+```
+
+</br>
+
+---
+
+## #8.13 User's Video
 
 <span style="color:#00FFFF">[EXPRESS]</span> </br>
