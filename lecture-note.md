@@ -2265,7 +2265,7 @@ const {
 
 ## #8.3 Edit Profile POST P2
 
-<span style="color:#D9F8C4">[MONGOOSE] update 내용을 보존하는 방법 </br>
+<span style="color:#D9F8C4">[MONGOOSE] </span> update 내용을 보존하는 방법 </br>
 
 - DB_Model.findByIdAndUpdate(\_id, {change_values}, {new: true})
 - 바뀌고 난 변수들을 저장한 DB객체를 리턴한다.
@@ -2515,5 +2515,45 @@ export const watch = async (req, res) => {
 ---
 
 ## #8.14 Bug Fig
+
+<span style="color:#D9F8C4">[MONGOOSE] </span> DB값 변경 확인 후 boolean 리턴</br>
+
+- ModelSchema 사용자 함수를 정의할 때 주로 사용된다.
+- DB 객체의 특정 값이 변경되었는지 확인한 후에 코드를 실행하고 싶을 때 사용된다.
+- this(or Model_Obj).isModified("Schema_Variable") </br>
+  (Schema_Variable 이 변경되었다면 true 반환)
+
+```js
+// Models/User.js 에서..
+
+userSchema.pre("save", async function () {
+  // password 값이 변경되었을 때만 bcrypt 실행
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 5);
+  }
+});
+```
+
+<span style="color:#00FFFF">[EXPRESS]</span> status(403): forbidden </br>
+
+- 권한때문에 거절될 경우 리턴하는 에러번호, 403
+
+```js
+// videoController.js 에서..
+
+// getEdit 부
+  ...
+  // session id와 video.owner 값이 일치하지 않으면 403 에러보내고 HOME화면으로 우회
+  if (String(video.owner) !== String(_id)) {
+    return res.status(403).redirect("/");
+  }
+  ...
+```
+
+</br>
+
+---
+
+## #9.1 Webpack Configuration P1
 
 <span style="color:#00FFFF">[EXPRESS]</span> </br>
