@@ -6,6 +6,7 @@
 <span style="color:#00FFFF">[EXPRESS]</span>
 <span style="color:#7FFF00">[PUG]</span>
 <span style="color:#D9F8C4">[MONGO-DB]</span>
+<span style="color:#D9F">[WEBPACK]</span>
 
 # #2 Set Up
 
@@ -2554,6 +2555,113 @@ userSchema.pre("save", async function () {
 
 ---
 
-## #9.1 Webpack Configuration P1
+## #9.1-2 Webpack Configuration P1, P2
 
-<span style="color:#00FFFF">[EXPRESS]</span> </br>
+<span style="color:#D9F">[WEBPACK]</span> WEBPACK 이란? </br>
+
+- 웹 모듈 번들러
+- 모듈 번들러 : 웹 애플리케이션을 구성하는 자원(HTML, CSS, Javscript, Images 등)을 모두 각각의 모듈로 보고 이를 조합해서 병합된 하나의 결과물을 만드는 도구
+- 주요 목적은 브라우저에서 사용할 JavaScript 파일을 번들로 묶는 것이지만 거의 모든 리소스나 asset을 변환, 번들링 또는 패키징할 수도 있다.
+
+> npm i webpack webpack-cli -D
+
+> webpack.config.js 파일 생성. 여기가 js, css파일 등을 바꿔주는 핵심엔진
+
+```js
+// webpack.config.js 에서..
+
+module.exports = {
+  // 가져올 파일 경로 입력
+  entry: "./src/client/js/main.js",
+  // 개발중인지, 디플로이할건지 입력
+  mode: "development",
+  // 출력 방식에 대한 설정
+  output: {
+    // 파일명
+    filename: "main.js",
+    // 파일 출력할 "절대경로"
+    // __dirname으로 현재 작업 폴더의 절대경로를 받고
+    // path.resolve로 "절대경로/assets/js" 라는 폴더에 배정
+    path: path.resolve(__dirname, "assets", "js"),
+  },
+  // 모듈화시, 어떤 방식을 적용할건지 설정
+  module: {
+    rules: [
+      {
+        // 모든 js파일을 대상으로
+        test: /\.js$/,
+        // babel-loader 라는 전용 로더를 사용한다.
+        use: {
+          loader: "babel-loader",
+          // 로더가 정해지면 옵션방식도 거의 정해짐.
+          options: {
+            presets: [["@babel/preset-env", { targets: "defaults" }]],
+          },
+        },
+      },
+    ],
+  },
+};
+```
+
+</br>
+
+---
+
+## #9.3 Webpack Configuration P3
+
+<span style="color:#D9F">[WEBPACK]</span> PUG에서 script src 참조시, 주소 주의사항 </br>
+
+- src js파일이 들어있는 폴더주소가 아닌, 웹에서 표시되는 주소로 써야한다.
+
+```js
+// base.pug 에서..
+
+// 실제 파일은 asstest/js/main.js 지만,
+// server.js에서 /static주소안의 js/main.js라고 지정했으므로 아래와 같이 쓴다.
+script((src = "/static/js/main.js"));
+```
+
+</br>
+
+---
+
+## #9.4 SCSS Loader
+
+<span style="color:#D9F">[WEBPACK]</span> SCSS와 관련된 로더 설치 </br>
+
+- sass-loader : scss파일을 읽고, css파일로 컴파일
+
+  > npm i sass-loader sass webpack --save-dev
+
+- css-loader : JS에 import되는 css파일을 해석해서 JS식으로 컴파일
+
+  > npm i --save-dev css-loader
+
+- style-loader : JS식으로 컴파일된 css를 DOM(HTML 인터페이스)에 쏘아주는 로더
+  > npm i --save-dev style-loader
+
+<span style="color:#D9F">[WEBPACK]</span> SCSS와 관련된 로더 사용의 주의점 </br>
+
+- babel-loader와 마찬가지로 test-use를 추가한다.
+- 여러 loader를 동시 로딩할 시, 배열 순서(LIFO)에 유의한다.
+
+```js
+// webpack.config.js 에서..
+
+// scss loader관련 추가시, 순서 주의
+    test: /\.scss$/,
+    use: ["style-loader", "css-loader", "sass-loader"],
+    // use배열 맨 마지막 것부터 실행이 되므로 순서가 중요하다.
+    // 1. scss -> css 컴파일 : sass-loader
+    // 2. css -> js 코드로 컴파일 : css-loader
+    // 3. 해당 js -> DOM 표시가능하도록 컴파일 : style-loader
+```
+
+</br>
+
+---
+
+## #9.5 MiniCssExtractPlugin
+
+<span style="color:#D9F">[WEBPACK]</span> </br>
