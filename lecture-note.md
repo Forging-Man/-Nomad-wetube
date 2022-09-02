@@ -2664,4 +2664,80 @@ script((src = "/static/js/main.js"));
 
 ## #9.5 MiniCssExtractPlugin
 
+<span style="color:#D9F">[WEBPACK]</span> MiniCssExtractPlugin : Webpack 이용시, JS와 CSS코드를 분리할 때 </br>
+
+- MiniCssExtractPlugin 를 사용한다.
+
+  > npm install --save-dev mini-css-extract-plugin
+
+- js파일과 css파일을 따로 저장할 땐, 아래 절차를 따른다.
+- plugin으로 MiniCssExtractPlugin 넣을때, filename을 따로 지정
+- webpack.config.js에서 "style-loader" 대신 MiniCssExtractPlugin.loader를 입력
+- js파일만 따로 들어갈 수 있도록 filename을 js/main.js로 변경
+
+```js
+// webpack.config.js 에서..
+
+module.exports = {
+  ...
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "css/styles.css",
+    }),
+  ],
+  output: {
+    filename: "js/main.js",
+    path: path.resolve(__dirname, "assets"),
+  },
+  module: {
+    rules: [
+      ...
+      {
+        test: /\.scss$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+      },
+    ],
+  },
+};
+```
+
+</br>
+
+---
+
+## #9.6 Better Developer Experience
+
+<span style="color:#D9F">[WEBPACK]</span> watch 모드 : 실시간 변화 감지 & 컴파일 </br>
+
+- webpack.config.js에 watch: true를 추가
+
+```js
+module.exports = {
+  entry: "./src/client/js/main.js",
+  mode: "development",
+  watch: true, // 실시간 webpack관련 변화감지
+  ...
+```
+
+<span style="color:#FF7F50">[Node-JS]</span> nodemon에서 변화 감지 예외 설정 </br>
+
+- nodemon 파일을 만들어 그 안에 예외를 넣는다.
+- 해당 파일을 불러올 때 실행할 변수도 넣으면 좋다. (exec)
+
+```js
+// nodemon.json 에서..
+
+{   // 배열에 적한 파일들은 변화 감지 OFF = 백엔드 재시작 안함
+    "ignore" : ["webpack.config.js", "src/client/*", "assets/*"],
+    // 이 파일이 불려지면 babel-node 실행
+    "exec": "babel-node src/init.js"
+}
+```
+
+</br>
+
+---
+
+## #10.0
+
 <span style="color:#D9F">[WEBPACK]</span> </br>
