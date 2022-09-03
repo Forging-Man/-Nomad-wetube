@@ -5,7 +5,9 @@ export const home = async (req, res) => {
   // Video.js의 DB에 접근, {}을 기준(빈칸이니까 모든 것을 검색)으로 검색 시작
   // DB의 promise 통신이라 순서대로 실행될 것
   try {
-    const videos = await Video.find({}).sort({ createdAt: "desc" });
+    const videos = await Video.find({})
+      .sort({ createdAt: "desc" })
+      .populate("owner");
     return res.render("home", { pageTitle: "Home", videos });
   } catch {
     return res.render("server-error");
@@ -113,7 +115,7 @@ export const search = async (req, res) => {
       title: {
         $regex: new RegExp(`${keyword}$`, "i"),
       },
-    });
+    }).populate("owner");
   }
   return res.render("search", { pageTitle: "Search", videos });
 };
