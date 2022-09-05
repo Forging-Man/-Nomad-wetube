@@ -2738,6 +2738,62 @@ module.exports = {
 
 ---
 
-## #10.0
+## #10.3 Styles Conclusions
+
+- 10.0 - 10.2 는 니코가 css작성하는 timelaps
+
+<span style="color:#00FFFF">[EXPRESS]</span> 더블 populate (deep populate)</br>
+
+- populate안에 populate를 한다.
+
+```js
+// userContorller.js 에서..
+
+export const see = async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findById(id).populate({
+    // 일단 모든 videos 객체들을 populate한다.
+    path: "videos",
+    populate: {
+      // video객체 안의 owner(ref:User)를 다시 populate한다.
+      // 이러면 owner와 관련된 정보만을 받아올 수 있다.
+      path: "owner",
+      model: "User",
+    },
+  ...
+```
+
+</br>
+
+---
+
+## #11.0 Player Setup
 
 <span style="color:#D9F">[WEBPACK]</span> </br>
+
+- 여러 엔트리를 서로 따로따로 저장할 수 있도록 설정
+
+```js
+// webpack.config/js 에서..
+
+module.exports = {
+  entry: {
+    // 서로 다른 입력파일(main, videoPlayer)을 엔트리 한다.
+    main: "./src/client/js/main.js",
+    videoPlayer: "./src/client/js/videoPlayer.js",
+  },
+  ...
+  output: {
+    // filename을 [name] 행렬로 설정하여, 서로 다른 엔트리가 각자만의 이름으로 저장되도록 한다.
+    filename: "js/[name].js",
+    path: path.resolve(__dirname, "assets"),
+    clean: true,
+  },
+  ...
+```
+
+</br>
+
+---
+
+## #11.1 Play Pause
