@@ -2797,3 +2797,46 @@ module.exports = {
 ---
 
 ## #11.1 Play Pause
+
+<span style="color:yellow">[JS]</span> video 관련 event-handler </br>
+
+- HTMLMediaElement : 비디오/오디오 관련 부모 요소 정리 </br>
+  https://developer.mozilla.org/ko/docs/Web/API/HTMLMediaElement
+- HTMLVideoElement : 비디오 관련 조작 요소 정리 </br>
+  https://developer.mozilla.org/ko/docs/Web/API/HTMLVideoElement
+
+```js
+// client/js/videoPlater.js 에서..
+
+video.muted : mute 여부 확인
+video.pause : pause 여부 확인
+video.play : play 여부 확인
+video.volume : volume 값 확인
+```
+
+</br>
+
+---
+
+## #11.2-3 Volume
+
+<span style="color:yellow">[JS]</span> range의 event-handle, input / change 차이 </br>
+
+- "change" : 변경 후 마우스를 떼야 적용
+- "input" : 실시간 변경 값을 적용
+- 그 외 range에 사용 가능한 이벤트 정리 </br>
+  https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range
+
+```js
+// client/js/videoPlater.js 에서..
+
+volumeRange.addEventListener("input", handleVolumeChange);
+```
+
+</br>
+
+---
+
+## #11.4
+
+<span style="color:yellow">[JS]</span> </br>
