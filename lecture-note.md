@@ -2837,6 +2837,66 @@ volumeRange.addEventListener("input", handleVolumeChange);
 
 ---
 
-## #11.4
+## #11.4 Duration and Current Time
+
+<span style="color:yellow">[JS]</span> 비디오의 metadata를 로드해서, 전체 길이와 현재 진행 시간 알아오기 </br>
+
+- 정해진 event-handle을 사용한다. </br>
+  loadeddata : 미디어의 첫번째 프레임이 로딩 완료된 시점에 발생 </br>
+  재생길이 등의 초기 비디오정보를 갱신할 때 사용 </br>
+  timeupdate : currentTime 속성이 변경되는 시점에 발생
+
+- video.duration : 비디오 전체 길이를 리턴
+- video.currentTime : 비디오 현재 시간을 리턴
+
+```js
+// client/js/videoPlayer.js 에서..
+
+const handleLoadedMetadata = () => {
+  totalTime.innerText = Math.floor(video.duration);
+};
+
+const handleTimeUpdate = () => {
+  currentTime.innerText = Math.floor(video.currentTime);
+};
+
+video.addEventListener("loadedmetadata", handleLoadedMetadata);
+video.addEventListener("timeupdate", handleTimeUpdate);
+```
+
+</br>
+
+---
+
+## #11.5 Time Formatting
+
+<span style="color:yellow">[JS]</span> 라이브러리를 사용하지 않고, 손쉽게 00:00:00 포멧으로 시간 표시하는 방법 </br>
+
+- new Date(숫자)를 사용한다.
+- new Date(숫자)의 경우, 첫 날짜 1970년 1월 1일 9시를 기준으로 숫자(ms)만큼 시간을 진행시킨다.
+- 따라서 진행하고 싶은 초\*1000 이후, 시간 부분만 string을 따와 표시하면 된다.
+
+```js
+// client/js/videoPlayer.js 에서..
+
+// 00:00:00 빼오는 함수
+const formatTime = (seconds) =>
+  new Date(seconds * 1000).toISOString().substring(11, 19);
+
+// 영상 길이에 함수 적용
+const handleLoadedMetadata = () => {
+  totalTime.innerText = formatTime(Math.floor(video.duration));
+};
+// 현재 시각에 함수 적용
+const handleTimeUpdate = () => {
+  currentTime.innerText = formatTime(Math.floor(video.currentTime));
+};
+```
+
+</br>
+
+---
+
+## #11.6
 
 <span style="color:yellow">[JS]</span> </br>
