@@ -2897,6 +2897,30 @@ const handleTimeUpdate = () => {
 
 ---
 
-## #11.6
+## #11.7 Fullscreen
 
-<span style="color:yellow">[JS]</span> </br>
+<span style="color:yellow">[JS]</span> 풀스크린 API </br>
+
+- Fullscreen API를 이용해 모든 항목(+그 자손까지)에 대해 풀스크린을 적용할 수 있다.
+- 관련 메소드는 아래와 같다. </br>
+  Element.requestFullscreen() : 풀스크린으로 전환 </br>
+  Document.exitFullscreen() : 창모드로 전환 </br>
+  Document.fullscreenElement : 현재 풀스크린인지 아닌지 리턴 </br>
+
+```js
+// client/js/videoPlayer.js 에서..
+
+const handleFullscreen = () => {
+  // 풀스크린 버튼을 눌렀을 때, 먼저 현재 document가 풀스크린인지 확인하고
+  const fullScreen = document.fullscreenElement;
+  // true일 경우 풀스크린을 종료, 버튼이름 변경
+  if (fullScreen) {
+    document.exitFullscreen();
+    fullScreenBtn.innerText = "Exnter Full Screen";
+    // flase일 경우 풀스크린으로 전환, 버튼이름 변경
+  } else {
+    videoContainer.requestFullscreen();
+    fullScreenBtn.innerText = "Exit Full Screen";
+  }
+};
+```
