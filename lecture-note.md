@@ -2924,3 +2924,61 @@ const handleFullscreen = () => {
   }
 };
 ```
+
+</br>
+
+---
+
+## #11.8 Controls Events P1
+
+<span style="color:yellow">[JS]</span> ms초 뒤에 특정함수 실행 및 취소 </br>
+
+- setTimeout(함수, ms초) : ms초 뒤에 함수 실행
+- clearTimeout(timeout id) : 해당 id (setTimeout설정된 id)를 캔슬
+
+```js
+// client/js/videoPlayer.js 에서..(코드 약간 변형)
+
+// setTimeout의 id 받을 변수 초기화
+let controlsTimeout = null;
+// setTimeout의 id 입력
+controlsTimeout = setTimeout(() => {
+  videoControls.classList.remove("showing");
+}, 3000);
+
+// setTimeout 취소
+clearTimeout(controlsTimeout);
+```
+
+</br>
+
+---
+
+## #11.9 Controls Events P2
+
+<span style="color:yellow">[JS]</span> 비디오 내부에 마우스가 계속 움직일 때 컨트롤러 유지하는 법 </br>
+
+- 움직일때마다 기존 setTimeout을 버리고 새로운 setTimeout을 생성
+- 움직임이 멈추면 setTimeout에 따라 컨트롤러 숨기는 함수 작동
+
+```js
+// client/js/videoPlayer.js 에서..(코드 약간 변형)
+
+// setTimeout의 id 받을 변수 초기화
+let controlsMovementTimeout = null;
+// 이전 setTimeout id가 설정되어 있었다면, 없애고 null 배치
+if (controlsMovementTimeout) {
+  clearTimeout(controlsMovementTimeout);
+  controlsMovementTimeout = null;
+}
+// 새로운 setTimeout id을 부여
+controlsMovementTimeout = setTimeout(hideControls, 3000);
+```
+
+</br>
+
+---
+
+## #11.10 recap
+
+<span style="color:yellow">[JS]</span> </br>
