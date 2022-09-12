@@ -2960,6 +2960,8 @@ clearTimeout(controlsTimeout);
 
 - 움직일때마다 기존 setTimeout을 버리고 새로운 setTimeout을 생성
 - 움직임이 멈추면 setTimeout에 따라 컨트롤러 숨기는 함수 작동
+- 마우스 이벤트 정리 </br>
+  https://developer.mozilla.org/en-US/docs/Web/API/Element#mouse_events
 
 ```js
 // client/js/videoPlayer.js 에서..(코드 약간 변형)
@@ -2979,6 +2981,77 @@ controlsMovementTimeout = setTimeout(hideControls, 3000);
 
 ---
 
-## #11.10 recap
+## #12.1 Register View Event
 
-<span style="color:yellow">[JS]</span> </br>
+<span style="color:yellow">[JS]</span> 비디오 재생이 끝난걸 확인하는 이벤트리스너 </br>
+
+- "ended" 속성
+- 비디오 재생이 전부 끝나고 난 다음 액션 실행
+- https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/ended_event
+
+```js
+// client/js/videoPlayer.js 에서..
+
+video.addEventListener("ended", handleEnded);
+```
+
+<span style="color:red">[HTML]</span> HTML Data 속성 </br>
+
+- video \_id같은 요소들을 가져올 때, 백엔드에서는 손쉽게 req.params으로 가져올 수 있었다. </br>
+  하지만 프론트의 JS에서는 req를 쓸 수 없으므로 다른 방법이 필요하다.
+- 이 때, HTML의 data-\* 속성을 사용 가능하다.
+- 페이지에 로드되는 모든 요소값을 data-\*에 지정할 수 있고, 프론트 JS에서는 이 값을 읽어올 수 있다.
+- 불러올 때는 JS에서 <요소id.dataset.(data-부분을 제외한)요소명>을 사용한다.
+- https://developer.mozilla.org/ko/docs/Learn/HTML/Howto/Use_data_attributes
+
+```js
+// watch.pug 에서..
+
+block content
+    // data-id 값으로 video의 _id 대입
+    div#videoContainer(data-id=video._id)
+    ...
+```
+
+```js
+// client/js/videoPlayer.js 에서..
+
+const handleEnded = () => {
+  // watch.pug에서 지정한 data-id 값을 id로 불러와 지정
+  const { id } = videoContainer.dataset;
+  fetch(`/api/videos/${id}/view`, {
+    method: "POST",
+  });
+};
+```
+
+</br>
+
+---
+
+## #12.2 Conclusions
+
+<span style="color:#00FFFF">[EXPRESS]</span> status() 와 sendStatus() 의 차이 </br>
+
+- res.status(404) 는 반드시 뒤에 render 등의 후처리를 필요로한다.
+- 후처리가 없는 경우, 계속 후처리를 기다리는 상태(pending)에 돌입한다.
+
+```js
+// 200 처리 후, "/" 렌더
+return res.status(200).render("/");
+```
+
+- res.sendStatus(404) 는 이것만으로 완료처리까지 된다.
+
+```js
+// 200 만 처리.
+return res.sendStatus(200);
+```
+
+</br>
+
+---
+
+## #13.0 Recorder Setup
+
+<span style="color:#00FFFF">[EXPRESS]</span> status() 와 sendStatus() 의 차이 </br>
