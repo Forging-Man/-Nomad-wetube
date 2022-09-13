@@ -3054,4 +3054,60 @@ return res.sendStatus(200);
 
 ## #13.0 Recorder Setup
 
-<span style="color:#00FFFF">[EXPRESS]</span> status() 와 sendStatus() 의 차이 </br>
+<span style="color:yellow">[JS]</span> 프론트 JS에서 async, await 비동기 함수 사용하기 </br>
+
+- regenerator-runtime 을 설치해줘야 한다.
+  > 1. npm i regenerator-runtime </br>
+  > 2. 프론트 JS에서 : import regeneratorRuntime from "regenerator-runtime";
+
+</br>
+
+<span style="color:yellow">[JS]</span> 비디오, 오디오 같은 유저측 미디어 요청을 수락하여 실시간 스트림 하는 방법 </br>
+
+- navigator.mediaDevices.getUserMedia(constraints);
+- constraints 내용물에 따라 어떤 미디어 정보를 가져올지 취사선택 </br>
+  { audio: true, video: true} : 오디오, 비디오 동시 스트림
+- https://developer.mozilla.org/ko/docs/Web/API/MediaDevices/getUserMedia
+
+```js
+// client/js/recoder.js 에서..
+
+// regenerator-runtime이 설치된 전제하에
+const handleStart = async () => {
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: false,
+    video: true,
+  });
+  // 스트림 객체를 출력.
+  // 객체 정보일 뿐이기때문에, 실시간 비디오 송출은 안됨.
+  console.log(stream);
+};
+```
+
+</br>
+
+---
+
+## #13.1 Video Preview
+
+<span style="color:yellow">[JS]</span> 스트림 객체를 실시간 미디어로 송출하는 방법 : srcObject </br>
+
+- 실시간 송출하기를 원하는 요소(video, audio 등)에 스트림을 배정한다.
+- 이 때, video.srcObject = 스트림 같은 방식으로 배정한다.
+
+```js
+const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+// 따로 video 요소를 만들고
+const video = document.createElement("video");
+// video 요소의 srcObject에 스트림 배정
+// 스트림 내용물이 실시간 video로 출력됨
+video.srcObject = mediaStream;
+```
+
+</br>
+
+---
+
+## #13.2
+
+<span style="color:yellow">[JS]</span> </br>
