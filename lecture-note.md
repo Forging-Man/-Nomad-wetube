@@ -3164,4 +3164,23 @@ recorder.stop(); // 녹화 중지
 
 ## #13.4
 
+<span style="color:yellow">[JS]</span> HTML 링크(a) 요소 작성 후 자동 클릭하게 만들기 </br>
+
+```js
+const handleDownload = () => {
+  const a = document.createElement("a");
+  a.href = videoFile;
+  a.download = "MyRecording.webm";
+  document.body.appendChild(a);
+  // 해당 함수가 트리거되면 링크 클릭까지 자동화
+  a.click();
+};
+```
+
+</br>
+
+---
+
+## #14.0
+
 <span style="color:yellow">[JS]</span> </br>
