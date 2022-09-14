@@ -3094,6 +3094,7 @@ const handleStart = async () => {
 
 - 실시간 송출하기를 원하는 요소(video, audio 등)에 스트림을 배정한다.
 - 이 때, video.srcObject = 스트림 같은 방식으로 배정한다.
+- https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
 
 ```js
 const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -3108,6 +3109,59 @@ video.srcObject = mediaStream;
 
 ---
 
-## #13.2
+## #13.2 Recording Video P1
+
+<span style="color:yellow">[JS]</span> 비디오/오디오 녹화하기 </br>
+
+- 비디오/오디오 관련 장치가 stream 되고있다는 전제하에 </br>
+  new MediaRecorder(stream) 객체 생성
+- https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder
+
+```js
+// stream = getUserMedia video 중이라는 전제하에
+
+const recorder = new MediaRecorder(stream); // 리코더 객체 생성
+recorder.start(); // 녹화 시작
+recorder.stop(); // 녹화 중지
+
+// .stop()을 호출하면 dataavailable의 event가 발생한다.
+// 해당 event안에는 리코더 객체의 각종 정보가 들어있다.
+// 관련 설명은 다음 챕터에서
+```
+
+</br>
+
+---
+
+## #13.3 Recording Video P2
+
+<span style="color:yellow">[JS]</span> 녹화 종료 후 URL생성하기 </br>
+
+- 녹화를 종료(.stop())하면, dataavailable의 event가 발생한다.
+- 해당 event에는 녹화된 객체 정보가 들어있다.
+- URL.createObjectURL(event.data) 를 통해 녹화된 객체의 URL을 만들 수 있다.
+- https://developer.mozilla.org/ko/docs/Web/API/URL/createObjectURL
+
+```js
+// stream = getUserMedia video 중이라는 전제하에
+
+const recorder = new MediaRecorder(stream); // 리코더 객체 생성
+// .stop() 이후 처리할 event를 미리 선언 (이러면 .stop()이 다른 event-handle에서 불려와도 알아서 처리됨)
+recorder.ondataavailable = (event) => {
+  const videoURL = URL.createObjectURL(event.data); // 녹화된 객체의 URL 생성 (해당 URL은 윈도우가 닫힐때까지만 유효하다.)
+  video.srcObject = null; // 촬영 중인 카메라 끄기
+  video.src = videoURL; // 대신 재생할 비디오 URL을 대입
+  video.play(); // 해당 URL의 비디오를 재생
+};
+
+recorder.start(); // 녹화 시작
+recorder.stop(); // 녹화 중지
+```
+
+</br>
+
+---
+
+## #13.4
 
 <span style="color:yellow">[JS]</span> </br>
