@@ -3162,7 +3162,7 @@ recorder.stop(); // 녹화 중지
 
 ---
 
-## #13.4
+## #13.4 Downloading the file
 
 <span style="color:yellow">[JS]</span> HTML 링크(a) 요소 작성 후 자동 클릭하게 만들기 </br>
 
@@ -3181,6 +3181,59 @@ const handleDownload = () => {
 
 ---
 
-## #14.0
+## #14.0 FFmpeg 소개
+
+<span style="color:yellow">[JS]</span> FFmpeg란 </br>
+
+- FFmpeg </br>
+  오디오 및 비디오를 기록, 변환 및 스트리밍하는 완벽한 크로스 플랫폼 솔루션입니다. FFmpeg는 인간과 기계가 만든 거의 모든 것을 디코딩, 인코딩, 트랜스코딩, mux, demux, 스트리밍, 필터링 및 재생할 수 있는 최고의 멀티미디어 프레임워크입니다. 유튜브도 이걸 씁니다. </br>
+  https://www.ffmpeg.org/
+
+- FFmpeg WebAssembly </br>
+  ffmpeg.wasm은 FFmpeg의 순수한 Webassembly/Javascript 포트입니다. 그것은 비디오 및 오디오 녹음, 변환, 스트리밍 등을 브라우저 내부에서 할 수 있도록 합니다.
+  FFmpeg WebAssembly를 사용하는 이유는 FFmpeg를 사용해서 브라우저로 하여금 비디오 파일을 변환하기 위함입니다. </br>
+  https://github.com/ffmpegwasm/ffmpeg.wasm
+
+- WebAssembly </br>
+  WebAssembly(Wasm)는 스택 기반 가상 머신을 위한 이진 명령 형식입니다. Wasm은 프로그래밍 언어를 위한 이식 가능한 컴파일 대상으로 설계되어 클라이언트 및 서버 응용 프로그램을 위해 웹에 배포할 수 있습니다.
+
+</br>
+
+---
+
+## #14.1 Transcode Video
+
+<span style="color:yellow">[JS]</span> FFmpeg로 mp4 인코딩하기 </br>
+
+- 아래는 공식과도 같으니, 그대로 적용한다.
+
+```js
+// client/js/recoder.js에서..
+
+const handleDownload = async () => {
+  const ffmpeg = createFFmpeg({ log: true }); // 처리과정 log를 표시
+  await ffmpeg.load(); // 일단 ffmpeg모듈을 로딩 (시간 걸리므로 await)
+
+  // .FS : 가상공간(MEMFS)에 파일을 어떻게 올릴건지 정하는 함수
+  // writeFile : 파일을 쓸거다(method)
+  // "recording.webm" : MEMFS에 올릴 파일명
+  // fetchFile(videoFile) : 바이너리(blob)로 이루어진 객체
+  ffmpeg.FS("writeFile", "recording.webm", await fetchFile(videoFile));
+
+  // .run : 핵심기능. 영상에 어떤 처리를 할건지 정한다.
+  // "-i" : input, 읽어올 파일을 의미
+  // "recording.webm" : MEMFS에서 읽어올 파일명
+  // "-r" : 프레임레이트 지정
+  // "60" : 60 프레임
+  // "output.mp4" : 변환 후의 출력 파일명 지정 (mp4 형식)
+  await ffmpeg.run("-i", "recording.webm", "-r", "60", "output.mp4");
+};
+```
+
+</br>
+
+---
+
+## #14.2 Download Transcoded Video
 
 <span style="color:yellow">[JS]</span> </br>
