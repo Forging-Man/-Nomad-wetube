@@ -3216,8 +3216,8 @@ const handleDownload = async () => {
 
   // .FS : 가상공간(MEMFS)에 파일을 어떻게 올릴건지 정하는 함수
   // writeFile : 파일을 쓸거다(method)
-  // "recording.webm" : MEMFS에 올릴 파일명
-  // fetchFile(videoFile) : 바이너리(blob)로 이루어진 객체
+  // "recording.webm" : MEMFS(MEMory of File System)에 쓸 파일명
+  // fetchFile(videoFile) : write를 위한 바이너리(blob)로 이루어진 객체
   ffmpeg.FS("writeFile", "recording.webm", await fetchFile(videoFile));
 
   // .run : 핵심기능. 영상에 어떤 처리를 할건지 정한다.
@@ -3235,5 +3235,64 @@ const handleDownload = async () => {
 ---
 
 ## #14.2 Download Transcoded Video
+
+<span style="color:yellow">[JS]</span> MEMFS에서 데이터 읽기</br>
+
+- .FS("readFile") 로 읽을시, Unit8Array로된 ArrayBuffer가 리턴된다.
+
+```js
+const mp4File = ffmpeg.FS("readFile", "output.mp4");
+// Unit8Array로 이루어진 ArrayBuffer 리턴
+console.log(mp4File.buffer);
+```
+
+<span style="color:yellow">[JS]</span> Unit8Array란?</br>
+
+- 양의 정수 8비트 배열(unsigned)을 의미
+- 음의 정수 8비트 호칭 : signed, 앞의 -가 사인되었다는 뜻
+
+```js
+[12, 5, 123, 67, 23 ...]
+```
+
+<span style="color:yellow">[JS]</span> ArrayBuffer란?</br>
+
+- raw binary data buffer를 의미
+- 주로 이 raw 데이터를 변환시켜서 사용한다.
+
+</br>
+
+---
+
+## #14.3 Thumbnail
+
+<span style="color:yellow">[JS]</span> 특정 프레임에서 썸네일 만들기</br>
+
+- -ss와 -frames:v 를 이용하여 특정 시간&프레임을 결정하고 이를 썸네일로 저장한다.
+
+```js
+// -i : 인풋할 대상을 선택
+// recording.webm : 인풋할 대상 파일명
+// -ss : 특정 시간을 탐색
+// 00:00:02 : 2초 시간을 설정
+// -frames:v : 특정 프레임을 선택
+// 1 : 1프레임 선택
+// thumnail.jpg : 해당 프레임을 저장할 파일명
+await ffmpeg.run(
+  "-i",
+  "recording.webm",
+  "-ss",
+  "00:00:02",
+  "-frames:v",
+  "1",
+  "thumbnail.jpg"
+);
+```
+
+</br>
+
+---
+
+## #14.4
 
 <span style="color:yellow">[JS]</span> </br>
