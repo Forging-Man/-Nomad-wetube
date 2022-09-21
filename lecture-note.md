@@ -3293,6 +3293,30 @@ await ffmpeg.run(
 
 ---
 
-## #14.4
+## #14.4 Recap
+
+<span style="color:yellow">[JS]</span> MEMFS에서 들고있는 링크 해제하기 </br>
+
+- .FS("unlink") 사용
+- MEMFS에 내용물이 계속 담겨 있을 경우, 인터넷이 느려진다.
+
+```js
+ffmpeg.FS("unlink", "recording.webm");
+```
+
+<span style="color:yellow">[JS]</span> URL.createObjectURL 로 만든 링크 해제하기 </br>
+
+- URL.revokeObjectURL() 사용
+- MEMFS와 마찬가지로, 계속 들고 있을 경우 인터넷이 느려질 수 있다.
+
+```js
+URL.revokeObjectURL(mp4Url);
+```
+
+</br>
+
+---
+
+## #15.0
 
 <span style="color:yellow">[JS]</span> </br>
