@@ -3317,6 +3317,40 @@ URL.revokeObjectURL(mp4Url);
 
 ---
 
-## #15.0
+## #15.0-1 Flash Installation ~ Sending Messages
 
-<span style="color:yellow">[JS]</span> </br>
+<span style="color:#00FFFF">[EXPRESS]</span> Express Flash </br>
+
+- npm i express-flash
+- 플래시 메시지를 정의하고 요청을 리디렉션하지 않고 렌더링할 수 있는 기능이 있는 connect-flash의 확장이다.
+- https://www.npmjs.com/package/express-flash
+
+```js
+// server.js 에서
+import flash from "express-flash";
+
+app.use(flash());
+```
+
+```js
+// 특정 컨트롤러에서..
+
+// 특정 함수안에서
+req.flash("info", "Welcome"); // local.message.info 가 생성됨
+```
+
+```js
+// PUG 등의 view에서..
+
+// local.message.info를 이용해서 메세지 표시
+if message.info
+  span=message.info
+```
+
+</br>
+
+---
+
+## #16.0-1
+
+<span style="color:#00FFFF">[EXPRESS]</span> </br>
