@@ -3340,7 +3340,7 @@ req.flash("info", "Welcome"); // local.message.info 가 생성됨
 ```
 
 ```js
-// PUG 등의 view에서..
+// PUG 등의 view에서..g
 
 // local.message.info를 이용해서 메세지 표시
 if message.info
@@ -3351,6 +3351,13 @@ if message.info
 
 ---
 
-## #16.0-1
+## #16.0-1 Comment Box
 
-<span style="color:#00FFFF">[EXPRESS]</span> </br>
+<span style="color:yellow">[JS]</span> addEventListner("submit") 특징 </br>
+
+- form의 경우, submit 핸들러가 적용가능하다.
+- submit이 작동하면 기본적으로 새로고침을 하기 때문에 preventDefault를 추가한다. (필요하다면)
+
+```js
+form.addEventListener("submit", handleSubmit);
+```
