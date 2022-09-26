@@ -3361,3 +3361,36 @@ if message.info
 ```js
 form.addEventListener("submit", handleSubmit);
 ```
+
+</br>
+
+---
+
+## #16.3-4 API Route
+
+<span style="color:#00FFFF">[EXPRESS]</span> fetch를 이용해 JSON 데이터로된 req.body 보내기 </br>
+
+- 서버측에 express.json()을 넣어둔다. </br>
+  (JSON.stringify() 실행이 가능해짐)
+- API request시, 데이터가 포함된 header와 함께 전송한다.
+- 이 때, 보낸 데이터가 JSON인지, string인지 header를 통해 Content-type을 지정해야함.
+
+```js
+// server.js에서..
+
+app.use(express.json());
+```
+
+```js
+// client/js/commentSection.js 에서..
+
+...
+  fetch(`/api/videos/${videoId}/comment`, {
+    method: "POST",
+    headers: { // JSON 파일을 보낼것임을 선언
+      "Content-Type": "application/json", // 반드시 이 양식일 것
+    },
+    body: JSON.stringify({ text }), // JSON으로 치환된 text를 body에 넣음
+  });
+  ...
+```
