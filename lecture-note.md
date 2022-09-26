@@ -3374,6 +3374,10 @@ form.addEventListener("submit", handleSubmit);
   (JSON.stringify() 실행이 가능해짐)
 - API request시, 데이터가 포함된 header와 함께 전송한다.
 - 이 때, 보낸 데이터가 JSON인지, string인지 header를 통해 Content-type을 지정해야함.
+- https://gomakethings.com/how-to-send-data-to-an-api-with-the-vanilla-js-fetch-method/
+- https://gomakethings.com/how-to-send-data-to-an-api-with-the-vanilla-js-fetch-method/#s011ending-data-as-a-json-object
+- https://expressjs.com/ko/api.html#express.json
+- https://expressjs.com/ko/api.html#express.text
 
 ```js
 // server.js에서..
@@ -3394,3 +3398,11 @@ app.use(express.json());
   });
   ...
 ```
+
+</br>
+
+---
+
+## #16.7 API Route
+
+<span style="color:#00FFFF">[EXPRESS]</span> </br>
