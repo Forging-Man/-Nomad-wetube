@@ -3403,6 +3403,25 @@ app.use(express.json());
 
 ---
 
-## #16.7 API Route
+## #16.7 Realtime Comments
 
-<span style="color:#00FFFF">[EXPRESS]</span> </br>
+<span style="color:yellow">[JS]</span> appendChild / prepend 차이 </br>
+
+- appendChile("element") : element를 마지막에 추가
+- prepend("element") : element를 맨 위에 추가
+
+```js
+const videoComments = document.querySelector(".video__comments ul");
+const newComment = document.createElement("li");
+
+// videoComments 하위에 newComment를 맨위에 계속 추가
+videoComments.prepend(newComment);
+```
+
+</br>
+
+---
+
+## #16.8
+
+<span style="color:yellow">[JS]</span> </br>
