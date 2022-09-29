@@ -3422,6 +3422,54 @@ videoComments.prepend(newComment);
 
 ---
 
-## #16.8
+## #16.8 Comment Ids
 
-<span style="color:yellow">[JS]</span> </br>
+<span style="color:#00FFFF">[EXPRESS]</span> res.json([body]) : 백엔드에서 json 문자열 response 반환하는 방법 </br>
+
+- 내부적으로 JSON.stringify()가 존재하여, body 부분을 JSON으로 치환한 뒤 반환한다.
+- https://expressjs.com/ko/api.html#res.json
+
+```js
+res.json({ user: "tobi" });
+res.status(500).json({ error: "message" });
+```
+
+<span style="color:#00FFFF">[EXPRESS]</span> response.json() : 백엔드에서 보낸 json 문자열을 프론트에서 표시하는 방법 </br>
+
+- 백엔드에서 보낸 res스트림(문자열)을 가져와 읽는다.
+- https://developer.mozilla.org/en-US/docs/Web/API/Response/json
+
+```js
+const { newCommentId } = await response.json();
+```
+
+</br>
+
+---
+
+## #16.9 Recapn and Challenge
+
+<span style="color:yellow">[JS]</span> element.remove() : 프론트 JS에서 해당 엘리먼트를 제거하는 법 </br>
+
+- removeChild() 로 대용가능
+- https://developer.mozilla.org/en-US/docs/Web/API/Element/remove
+
+<span style="color:yellow">[ETC]</span> 그 외 프로젝트 </br>
+
+챌린지 과제
+
+- 댓글 삭제하기 (삭제시 비디오나 유저 도큐먼트에서도 삭제 필요)
+
+추가로 구현해볼 만한 기능들
+
+- 댓글 추가 및 삭제시 실시간으로 댓글 갯수 변경
+- 댓글 수정하기
+- 좋아요
+- 좋아요 취소
+- 해시태그 클릭시 비디오 찾기
+
+</br>
+
+---
+
+## #17.0
