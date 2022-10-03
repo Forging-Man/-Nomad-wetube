@@ -3472,4 +3472,66 @@ const { newCommentId } = await response.json();
 
 ---
 
-## #17.0
+## #17.0 Building the Backend
+
+<span style="color:#00FFFF">[EXPRESS]</span> babel CLI란? </br>
+
+- npm install --save-dev @babel/cli
+- Babel은 명령줄에서 파일을 컴파일하는 데 사용할 수 있는 내장 CLI와 함께 제공됩니다.
+- https://babeljs.io/docs/en/babel-cli
+
+<span style="color:#00FFFF">[EXPRESS]</span> regeneratorRuntime : ES5에서 비동기 실행하는 방법 </br>
+
+- regeneratorRuntime
+- Regenerator로 컴파일된 생성기 및 비동기 함수를 위한 독립 실행형 런타임입니다.
+- https://www.npmjs.com/package/regenerator-runtime
+
+```js
+import "regenerator-runtime";
+// babel에서 ES5로 바꿔줄때, 비동기 함수들을 실행할 수 있게 된다.
+```
+
+</br>
+
+---
+
+## #17.3 Deploying to Heroku
+
+<span style="color:#00FFFF">[EXPRESS]</span> 17.3단원 정리 </br>
+
+- vscode 터미널, 관리자 권한 실행하기
+
+  - vscode 실행파일 자체를 관리자로 실행하면 됨
+
+- Heroku </br>
+
+  - heroku logs --tail: 실시간으로 헤로쿠 로그 보기 </br>
+  - https://www.heroku.com
+
+- Heroku로 배포하는 방법 2가지
+
+  1.  Heroku CLI 이용하기 </br>
+      heroku login (헤로쿠 로그인) </br>
+      heroku git:remote -a : app이름 (헤로쿠 원격 저장소와 연결) </br>
+      git push heroku master (헤로쿠에 푸시) </br>
+
+            - +error: src refspec master does not match any 오류 해결 방법 </br>
+
+      git push heroku master대신 git push heroku main 또는 </br>
+      git push heroku HEAD:master로 시도해보세요. </br>
+      아마 깃 브랜치는 main인데 heroku 브랜치는 main이 아니여서 생기는 오류로 추정됩니다. </br>
+
+  2.  GitHub 이용하기 </br>
+      GitHub 리포지토리에 연결
+
+- MongoDB Atlas </br>
+
+  - https://www.mongodb.com/cloud/atlas
+
+  </br>
+
+---
+
+## #17.4
+
+<span style="color:#00FFFF">[EXPRESS]</span> </br>
