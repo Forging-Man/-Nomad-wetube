@@ -3553,4 +3553,32 @@ import "regenerator-runtime";
   모든 옵션 매개변수가 URL로 인코딩되었는지 확인하십시오.
 
 - .env에서 설정한 환경 변수를 heroku에 setting - Config Vars에 각각 추가
+
   - 프로젝트에선 DB_URL / COOKIE_SECRET 을 추가함
+
+  </br>
+
+---
+
+## #17.5 Environment Variables
+
+<span style="color:#00FFFF">[EXPRESS]</span>17.5 단원 정리</br>
+
+- heroku tail 에러시 해결 방법 </br>
+
+  - (내 경우) err 메세지를 하나씩 확인해본 결과, mongo atlas 연결 문제로 보였다.
+  - mongo atlas에 접속, network security에 들어가 내 현재 ip를 변경했다.
+  - 유동 ip의 경우, 이런 일이 발생하는걸로 보임
+
+- 또 다른 한 일 : heroku에 GH_CLIENT/GH_SECRET 추가
+
+  - "깃헙으로 로그인 하기"에 필수적인 두 요소들은 .env파일에 저장되어있다.
+  - 따라서, heroku config vars에 따로 추가해줘야한다.
+
+  </br>
+
+---
+
+## #17.6 Github and AWS S3 P1
+
+<span style="color:#00FFFF">[EXPRESS]</span>17.6 단원 정리</br>
