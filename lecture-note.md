@@ -3526,12 +3526,31 @@ import "regenerator-runtime";
 
 - MongoDB Atlas </br>
 
+  - 몽고DB를 헤로쿠에서 이용하는 방법
   - https://www.mongodb.com/cloud/atlas
 
   </br>
 
 ---
 
-## #17.4
+## #17.4 MongoDB Atlas
 
-<span style="color:#00FFFF">[EXPRESS]</span> </br>
+<span style="color:#00FFFF">[EXPRESS]</span>17.4 단원 정리</br>
+
+- MongoDB 생성 </br>
+
+  1. 새로운 Project 생성
+  2. Cluster추가 (Create a database)
+     (Atlas-DEPLOYMENT-Databases에서 Build a Database로 변경)
+  3. Shared클릭
+  4. Cloud Provider & Region 선택 (us-east-1)
+  5. Cluster Tier 선택 (Free)
+  6. Cluster 생성 </br>
+
+- Connect to DB </br>
+  password를 사용자의 암호로 바꿉니다.</br>
+  myFirstDatabase를 연결이 기본적으로 사용할 데이터베이스 이름으로 바꿉니다. </br>
+  모든 옵션 매개변수가 URL로 인코딩되었는지 확인하십시오.
+
+- .env에서 설정한 환경 변수를 heroku에 setting - Config Vars에 각각 추가
+  - 프로젝트에선 DB_URL / COOKIE_SECRET 을 추가함
