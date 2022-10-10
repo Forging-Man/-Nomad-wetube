@@ -3562,12 +3562,12 @@ import "regenerator-runtime";
 
 ## #17.5 Environment Variables
 
-<span style="color:#00FFFF">[EXPRESS]</span>17.5 단원 정리</br>
+<span style="color:#00FFFF">[EXPRESS]</span> 17.5 단원 정리</br>
 
 - heroku tail 에러시 해결 방법 </br>
 
   - (내 경우) err 메세지를 하나씩 확인해본 결과, mongo atlas 연결 문제로 보였다.
-  - mongo atlas에 접속, network security에 들어가 내 현재 ip를 변경했다.
+  - mongo atlas에 접속, network access 들어가 내 현재 ip를 변경했다.
   - 유동 ip의 경우, 이런 일이 발생하는걸로 보임
 
 - 또 다른 한 일 : heroku에 GH_CLIENT/GH_SECRET 추가
@@ -3581,4 +3581,13 @@ import "regenerator-runtime";
 
 ## #17.6 Github and AWS S3 P1
 
-<span style="color:#00FFFF">[EXPRESS]</span>17.6 단원 정리</br>
+<span style="color:#00FFFF">[EXPRESS]</span> 17.6 단원 정리</br>
+
+- GitHub Developer settings (깃허브 소셜 로그인 구현시) </br>
+  생성한 OAuth Apps의 Authorization callback URL를 최종 배포한 사이트 주소로 변경
+
+  - https://github.com/settings/developers
+
+- heroku dashboard에서 github으로 deploy하는 법
+  - heroku -> project -> deploy 탭 -> github connect
+  - 이러면 git push origin master만으로 heroku까지 자동갱신된다.
